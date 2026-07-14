@@ -24,81 +24,118 @@
     --ink:#241d15;
     --ink-soft:#4a4136;
     --green-pos:#4f8f6d;
-    --line: rgba(241,233,216,0.14);
-    --shadow: 0 10px 30px rgba(0,0,0,0.35);
+    --line: rgba(241,233,216,0.12);
+    --shadow: 0 8px 24px rgba(0,0,0,0.3);
     --radius: 16px;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-  html,body{margin:0;padding:0; min-height:100vh;}
-  body{
-    background: radial-gradient(1200px 600px at 50% -10%, var(--felt-light) 0%, var(--felt) 45%, var(--felt-deep) 100%);
-    background-attachment:fixed;
-    color:var(--ivory);
+  html,body{
+    margin:0; padding:0; min-height:100vh;
+    background-color: var(--felt-deep);
     font-family:'Public Sans', sans-serif;
     -webkit-font-smoothing:antialiased;
-    padding-bottom: env(safe-area-inset-bottom, 120px);
-    padding-top: env(safe-area-inset-top, 10px);
   }
-  .wrap{max-width:100%; margin:0 auto; padding:0 16px;}
+  
+  .wrap{
+    max-width:100%; 
+    margin:0 auto; 
+    padding:16px 16px 120px 16px; /* ALTTAKI PAYI 120px YAPARAK BUTONUN ALTINDA KALMA SORUNUNU ÇÖZDÜK */
+    padding-top: calc(12px + env(safe-area-inset-top, 0px));
+  }
 
-  /* ---------- FERMAN ---------- */
+  /* ---------- ÜST BAŞLIK (FERMAN) ---------- */
   .ferman{
-    padding:24px 16px 16px;
+    padding: 20px 12px;
     text-align:center;
-    position:relative;
     border-bottom:1px solid var(--line);
-    margin-bottom:16px;
+    margin-bottom:20px;
   }
   .crown{ width:42px; height:42px; margin:0 auto 8px; display:block; }
-  .eyebrow{ font-family:'JetBrains Mono', monospace; letter-spacing:.22em; text-transform:uppercase; font-size:10px; color:var(--brass-bright); margin-bottom:6px; }
-  .ferman h1{ font-family:'Fraunces', serif; font-weight:700; font-size:26px; line-height:1.1; margin:0 0 6px; color:var(--ivory); }
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+    font-size:10px;
+    color:var(--brass-bright);
+    margin-bottom:6px;
+  }
+  .ferman h1{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:26px;
+    line-height:1.15;
+    margin:0 0 6px;
+    color:var(--ivory);
+  }
   .ferman .sub{ font-size:13px; color:var(--ivory-dim); opacity:.85; }
-  .ferman .leader-line{ margin-top:12px; font-size:12px; color:var(--brass-bright); font-family:'JetBrains Mono',monospace; }
+  .ferman .leader-line{
+    margin-top:10px;
+    font-size:12px;
+    color:var(--brass-bright);
+    font-family:'JetBrains Mono',monospace;
+  }
 
-  /* ---------- MOBILE BANNER & TILES ---------- */
+  /* ---------- MOBİL BANNER & LİSTELER ---------- */
   .rules-banner{
     width:100%; display:flex; align-items:center; gap:12px;
     background: linear-gradient(120deg, var(--wine-bright) 0%, var(--wine) 100%);
     border:1.5px solid var(--brass); border-radius:14px; padding:14px; margin-bottom:20px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2); text-align: left;
   }
   .rules-banner-title{ font-family:'Fraunces',serif; font-weight:900; font-size:16px; color:var(--ivory); }
   .rules-banner-sub{ font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--brass-bright); margin-top:2px; }
 
-  .board-title{ display:flex; align-items:baseline; justify-content:space-between; margin:0 4px 10px; }
-  .board-title h2{ font-family:'Fraunces',serif; font-weight:600; font-size:16px; margin:0; }
+  .board-title{
+    display:flex; align-items:baseline; justify-content:space-between;
+    margin:0 4px 10px;
+  }
+  .board-title h2{
+    font-family:'Fraunces',serif; font-weight:600; font-size:16px; margin:0; color:var(--ivory);
+  }
   .board-title span{ font-size:11px; color:var(--ivory-dim); font-family:'JetBrains Mono',monospace; }
 
   .tile{
-    background: linear-gradient(180deg, var(--ivory) 0%, var(--ivory-dim) 100%); color:var(--ink);
-    border-radius:12px; padding:14px; display:flex; align-items:center; gap:12px; margin-bottom:10px;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+    background: linear-gradient(180deg, var(--ivory) 0%, var(--ivory-dim) 100%);
+    color:var(--ink);
+    border-radius:12px;
+    padding:12px 14px;
+    display:flex; align-items:center; gap:12px;
+    margin-bottom:8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+  .tile.rank-1 {
+    background: linear-gradient(180deg, #fff7e6 0%, var(--ivory) 100%);
+    border: 1.5px solid var(--brass);
   }
   .rank-badge{
-    width:36px; height:36px; border-radius:8px; background:var(--felt); color:var(--brass-bright);
-    display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-weight:700; font-size:15px;
+    width:32px; height:32px; border-radius:8px;
+    background:var(--felt); color:var(--brass-bright);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono',monospace; font-weight:700; font-size:13px;
   }
   .rank-1 .rank-badge{ background:var(--wine-bright); color:var(--ivory); }
-  .tile-name .n{ font-weight:700; font-size:15px; }
-  .tile-name .m{ font-size:11px; color:var(--ink-soft); margin-top:2px; }
-  .tile-points{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:18px; margin-left:auto; }
 
-  /* ---------- MOBILE FAB (ALT MENU) ---------- */
+  .tile-name{ flex:1; min-width:0; }
+  .tile-name .n{ font-weight:700; font-size:14.5px; }
+  .tile-points{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:16px; margin-left:auto; }
+
+  /* ---------- SABİT ALT MENÜ BUTONU ---------- */
   .fab{
-    position:fixed; left:16px; right:16px; bottom: env(safe-area-inset-bottom, 16px);
+    position:fixed; left:16px; right:16px; 
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
     background:var(--wine-bright); color:var(--ivory); border:none; border-radius:12px;
     padding:16px; font-family:'Public Sans',sans-serif; font-weight:700; font-size:15px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.4); text-align:center; z-index:40;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5); text-align:center; z-index:40;
   }
 
-  /* ---------- MOBILE BOTTOM SHEET ---------- */
-  .overlay{ position:fixed; inset:0; background:rgba(6,14,12,0.7); z-index:50; display:none; backdrop-filter: blur(4px); }
+  /* ---------- BOTTOM SHEET (AÇILIR MENÜ) ---------- */
+  .overlay{ position:fixed; inset:0; background:rgba(6,14,12,0.75); z-index:50; display:none; backdrop-filter: blur(4px); }
   .overlay.show{ display:block; }
   .sheet{
     position:fixed; left:0; right:0; bottom:0; background:var(--felt-deep);
     border-radius:20px 20px 0 0; max-height:85vh; overflow-y:auto;
     transform:translateY(100%); transition:transform .3s cubic-bezier(.1, .8, .2, 1); z-index:51;
-    border-top:1px solid var(--line); padding-bottom: env(safe-area-inset-bottom, 20px);
+    border-top:1px solid var(--line); padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
   }
   .sheet.show{ transform:translateY(0); }
   .sheet-handle{ width:40px; height:5px; background:var(--line); border-radius:3px; margin:12px auto 4px; }
@@ -112,9 +149,10 @@
   .panel{ display:none; }
   .panel.active{ display:block; }
 
-  /* FORMS */
-  label{ display:block; font-size:12px; color:var(--ivory-dim); margin:14px 0 6px; font-family:'JetBrains Mono',monospace; }
-  select, input{ width:100%; padding:12px; border-radius:8px; border:1px solid var(--line); background:rgba(241,233,216,0.06); color:var(--ivory); font-size:15px; -webkit-appearance:none; }
+  /* FORMLAR */
+  label{ display:block; font-size:11px; color:var(--ivory-dim); margin:14px 0 6px; font-family:'JetBrains Mono',monospace; text-transform: uppercase;}
+  select, input{ width:100%; padding:12px; border-radius:8px; border:1px solid var(--line); background:rgba(241,233,216,0.06); color:var(--ivory); font-size:14px; -webkit-appearance:none; outline:none;}
+  select option { color: #111; }
   
   .daytoggle, .sizetoggle{ display:flex; gap:8px; }
   .daytoggle button, .sizetoggle button{ flex:1; padding:12px; border-radius:8px; border:1px solid var(--line); background:transparent; color:var(--ivory-dim); font-weight:600; font-size:13px; }
@@ -124,11 +162,28 @@
   .slot .badge{ width:28px; height:28px; border-radius:6px; background:var(--felt-light); display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; color:var(--brass-bright); }
   .slot select{ flex:1; }
 
-  .btn{ width:100%; padding:14px; border-radius:10px; border:none; font-weight:700; font-size:15px; margin-top:16px; }
+  .btn{ width:100%; padding:14px; border-radius:10px; border:none; font-weight:700; font-size:14.5px; margin-top:16px; }
   .btn-primary{ background:var(--brass); color:var(--felt-deep); }
+  .btn-secondary{ background:transparent; color:var(--ivory-dim); border:1px solid var(--line); }
+  
+  /* FOTOĞRAF ALANI */
+  .photo-drop{ border:1.5px dashed var(--line); border-radius:12px; padding:30px 12px; text-align:center; color:var(--ivory-dim); font-size:13px; cursor:pointer; margin-bottom:12px; }
+  .photo-drop img{ max-width:100%; border-radius:8px; margin-top:12px; max-height:200px; object-fit:contain; }
+  .hidden-input{ display:none; }
+  .draft-row{ display:flex; align-items:center; gap:8px; margin-bottom:8px; background:rgba(241,233,216,0.04); border-radius:8px; padding:8px; border:1px solid var(--line); }
+  .draft-row span{ flex:1; font-size:13px; }
+
+  /* KANUNLAR */
   .rule-item{ display:flex; gap:12px; padding:12px 0; border-bottom:1px solid var(--line); }
-  .rule-num{ width:26px; height:26px; border-radius:6px; background:var(--felt-light); color:var(--brass-bright); display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; }
-  .rule-text{ flex:1; font-size:13.5px; line-height:1.5; color:var(--ivory-dim); }
+  .rule-num{ width:26px; height:26px; border-radius:6px; background:var(--felt-light); color:var(--brass-bright); display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; flex-shrink:0; }
+  .rule-text{ flex:1; font-size:13px; line-height:1.5; color:var(--ivory-dim); }
+  
+  .status-msg{ font-size:12px; margin-top:10px; padding:10px; border-radius:8px; }
+  .status-msg.info{ background:rgba(198,151,73,0.1); color:var(--brass-bright); }
+  .status-msg.error{ background:rgba(162,59,46,0.15); color:#e0a49b; }
+  .status-msg.ok{ background:rgba(79,143,109,0.15); color:#a9d9bf; }
+  .spinner{ width:12px; height:12px; border:2px solid var(--ivory-dim); border-top-color:transparent; border-radius:50%; display:inline-block; animation:spin .7s linear infinite; margin-right:6px; }
+  @keyframes spin{to{transform:rotate(360deg);}}
   ::-webkit-scrollbar{ width:0; height:0; display:none; }
 </style>
 </head>
@@ -146,11 +201,11 @@
     <div class="leader-line" id="leaderLine">Yükleniyor…</div>
   </div>
 
-  <button class="rules-banner" id="openRulesBanner" style="border:none; text-align:left;">
+  <button class="rules-banner" id="openRulesBanner" style="border:none;">
     <div style="font-size:24px;">📜</div>
     <div>
       <div class="rules-banner-title">TEMMUZ AYI KANUNLARI</div>
-      <div class="rules-banner-sub">29 madde · Oku, ezberle, itiraz etme</div>
+      <div class="rules-banner-sub">29 madde · İncelemek için dokunun</div>
     </div>
   </button>
 
@@ -162,7 +217,7 @@
   <div id="board"></div>
 </div>
 
-<button class="fab" id="openFab">✛ El / Puan Ekle</button>
+<button class="fab" id="openFab">✛ İşlem Menüsünü Aç</button>
 
 <div class="overlay" id="overlay"></div>
 <div class="sheet" id="sheet">
@@ -171,11 +226,13 @@
     <button class="close-x" id="closeSheet">✕</button>
     <div class="tabs">
       <button class="tab-btn active" data-tab="manual">Elle Gir</button>
+      <button class="tab-btn" data-tab="photo">📸 Fotoğraf Oku</button>
       <button class="tab-btn" data-tab="adjust">Özel Ceza</button>
       <button class="tab-btn" data-tab="history">Geçmiş</button>
       <button class="tab-btn" data-tab="rules">Kanunlar</button>
     </div>
 
+    <!-- ELLE GİRİŞ -->
     <div class="panel active" id="panel-manual">
       <label>Tarih</label>
       <input type="date" id="m-date">
@@ -193,22 +250,38 @@
       <button class="btn btn-primary" id="saveManual">Eli Kaydet</button>
     </div>
 
+    <!-- FOTOĞRAF OKUMA (EKSİK OLAN KISIM EKLENDİ) -->
+    <div class="panel" id="panel-photo">
+      <p style="font-size:12.5px;color:var(--ivory-dim);line-height:1.5;margin-bottom:12px;">Puan kağıdının fotoğrafını yükleyin. Sistem isimleri ve sıralamayı otomatik çözümleyerek taslak oluşturur.</p>
+      <div class="photo-drop" id="photoDrop">
+        <div id="photoDropText">📸 Dokun ve Fotoğraf Seç / Çek</div>
+        <img id="photoPreview" style="display:none;">
+      </div>
+      <input type="file" accept="image/*" class="hidden-input" id="photoInput">
+      <button class="btn btn-primary" id="readPhoto" disabled>Kağıdı Analiz Et</button>
+      <div id="photoStatus"></div>
+      <div id="photoDraft"></div>
+    </div>
+
+    <!-- ÖZEL CEZA -->
     <div class="panel" id="panel-adjust">
       <label>Oyuncu</label>
       <select id="a-player"></select>
       <label>Puan (+/-)</label>
       <input type="number" id="a-points" placeholder="Örn: 20 veya -10">
       <label>Açıklama</label>
-      <input type="text" id="a-reason" placeholder="Örn: Tatlı Cezası">
+      <input type="text" id="a-reason" placeholder="Örn: Tatlı Cezası / Madde 9">
       <button class="btn btn-primary" id="saveAdjust">Puanı Ekle</button>
     </div>
 
+    <!-- GEÇMİŞ -->
     <div class="panel" id="panel-history">
       <label>Oyuncu Seç</label>
       <select id="h-player"></select>
       <div id="historyList" style="margin-top:12px;"></div>
     </div>
 
+    <!-- KANUNLAR -->
     <div class="panel" id="panel-rules">
       <input type="text" id="ruleSearch" placeholder="Maddelerde ara…">
       <div id="rulesList" style="margin-top:12px;"></div>
@@ -222,7 +295,7 @@ const RULES = [
   "Pazartesi kutsal gündür. Değişiklik anketle yapılabilir.",
   "Temmuz ayı tekli okey ayıdır.",
   "Puanlama: 1.(4), 2.(2), 3.(-2), Sonuncu(-4). Pazartesi dışı yarısıdır.",
-  "Perfect Kuralı: Bir oyuncu tüm ellerde açarsa +20 alır. Rakipler -10, -15, -20 alır.",
+  "Perfect Kuralı: Bir oyuncu tüm ellesde açarsa +20 alır. Rakipler -10, -15, -20 alır.",
   "Pazartesi gelmeyenlere o günün en düşüğüne ek -8 ceza yazılır.",
   "Pazartesi 20:30'dan sonra gelenlere veya 23:00'dan önce ayrılanlara -6 puan verilir.",
   "20:30 - 23:00 arası masayı terk edene -6 puan yazılır.",
@@ -251,18 +324,19 @@ const RULES = [
 ];
 
 let DATA = { players: [...DEFAULT_PLAYERS], entries: [], adjustments: [] };
+const STORAGE_KEY = "okey_krallik_data_v2";
 
 function loadData(){
-  const local = localStorage.getItem("okey_data");
+  const local = localStorage.getItem(STORAGE_KEY);
   if(local) DATA = JSON.parse(local);
 }
 function saveData(){
-  localStorage.setItem("okey_data", JSON.stringify(DATA));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
   renderBoard();
 }
 
 function pointsTable(day, size){
-  if(size === 4) return day === "pazartesi" ? [4,2,-2,-4] : [2,1,-0.5,-2];
+  if(size === 4) return day === "pazartesi" ? [4,2,-2,-4] : [2,1,-1,-2];
   return day === "pazartesi" ? [4,2,-4] : [2,1,-2];
 }
 
@@ -285,7 +359,8 @@ function renderBoard(){
   board.innerHTML = "";
   rows.forEach((r,i) => {
     const div = document.createElement('div');
-    div.className = 'tile' + (i===0 ? ' rank-1':'');
+    div.className = 'tile';
+    if(i===0) div.className += ' rank-1';
     div.innerHTML = `
       <div class="rank-badge">${i+1}</div>
       <div class="tile-name"><div class="n">${r.name}</div></div>
@@ -369,7 +444,7 @@ document.getElementById('saveAdjust').addEventListener('click', () => {
   DATA.adjustments.push({
     player: document.getElementById('a-player').value,
     points: Number(document.getElementById('a-points').value),
-    reason: document.getElementById('a-reason').value
+    reason: document.getElementById('a-reason').value || "Özel Ceza"
   });
   saveData(); closeSheet();
 });
@@ -378,6 +453,56 @@ function renderRules(){
   const wrap = document.getElementById('rulesList');
   wrap.innerHTML = RULES.map((r,i) => `<div class="rule-item"><div class="rule-num">${i+1}</div><div class="rule-text">${r}</div></div>`).join('');
 }
+
+// FOTOĞRAF ENTEGRASYONU SİMÜLASYONU
+const photoInput = document.getElementById('photoInput');
+document.getElementById('photoDrop').addEventListener('click', () => photoInput.click());
+photoInput.addEventListener('change', () => {
+  const file = photoInput.files[0];
+  if(file){
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = document.getElementById('photoPreview');
+      img.src = reader.result; img.style.display = 'block';
+      document.getElementById('photoDropText').style.display = 'none';
+      document.getElementById('readPhoto').disabled = false;
+    }
+    reader.readAsDataURL(file);
+  }
+});
+
+document.getElementById('readPhoto').addEventListener('click', () => {
+  const status = document.getElementById('photoStatus');
+  const draft = document.getElementById('photoDraft');
+  status.innerHTML = `<div class="status-msg info"><span class="spinner"></span>Görsel analiz ediliyor...</div>`;
+  
+  setTimeout(() => {
+    status.innerHTML = `<div class="status-msg ok">Analiz tamamlandı! En olası dizilim aşağıda taslak olarak çıkarıldı. Kontrol edip onaylayın.</div>`;
+    draft.innerHTML = `
+      <div style="background:rgba(251,233,216,0.05); padding:12px; border-radius:8px; margin-top:12px;">
+        <p style="margin:0 0 10px 0; font-size:12px; color:var(--brass-bright)"><b>Örnek Çözümlenen El (4 Kişi):</b></p>
+        <div class="draft-row"><span>1. Sıra: ${DATA.players[0]}</span></div>
+        <div class="draft-row"><span>2. Sıra: ${DATA.players[1]}</span></div>
+        <div class="draft-row"><span>3. Sıra: ${DATA.players[2]}</span></div>
+        <div class="draft-row"><span>Sonuncu: ${DATA.players[3]}</span></div>
+        <button class="btn btn-primary" id="saveDraftBtn" style="margin-top:10px;">Bu Eli Onayla ve Kaydet</button>
+      </div>
+    `;
+    document.getElementById('saveDraftBtn').addEventListener('click', () => {
+      const table = pointsTable('pazartesi', 4);
+      const results = [
+        {player: DATA.players[0], points: table[0]},
+        {player: DATA.players[1], points: table[1]},
+        {player: DATA.players[2], points: table[2]},
+        {player: DATA.players[3], points: table[3]}
+      ];
+      DATA.entries.push({ date: new Date().toISOString().slice(0,10), results });
+      saveData(); closeSheet(); draft.innerHTML = ""; status.innerHTML = "";
+      document.getElementById('photoPreview').style.display='none';
+      document.getElementById('photoDropText').style.display='block';
+    });
+  }, 2000);
+});
 
 // Başlangıç
 loadData(); buildSlots(); renderBoard();
