@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Temmuz Ayı Krallığı — Liderlik Tablosu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --felt-deep:#0e2622;
+    --felt:#163832;
+    --felt-light:#1f4b3f;
+    --ivory:#f1e9d8;
+    --ivory-dim:#e5dac2;
+    --brass:#c69749;
+    --brass-bright:#e0b768;
+    --wine:#7a2e2e;
+    --wine-bright:#a23b2e;
+    --ink:#241d15;
+    --ink-soft:#4a4136;
+    --green-pos:#4f8f6d;
+    --line: rgba(241,233,216,0.14);
+    --shadow: 0 10px 30px rgba(0,0,0,0.35);
+    --radius: 16px;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0; min-height:100vh;}
+  body{
+    background: radial-gradient(1200px 600px at 50% -10%, var(--felt-light) 0%, var(--felt) 45%, var(--felt-deep) 100%);
+    background-attachment:fixed;
+    color:var(--ivory);
+    font-family:'Public Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom: env(safe-area-inset-bottom, 120px);
+    padding-top: env(safe-area-inset-top, 10px);
+  }
+  .wrap{max-width:100%; margin:0 auto; padding:0 16px;}
+
+  /* ---------- FERMAN ---------- */
+  .ferman{
+    padding:24px 16px 16px;
+    text-align:center;
+    position:relative;
+    border-bottom:1px solid var(--line);
+    margin-bottom:16px;
+  }
+  .crown{ width:42px; height:42px; margin:0 auto 8px; display:block; }
+  .eyebrow{ font-family:'JetBrains Mono', monospace; letter-spacing:.22em; text-transform:uppercase; font-size:10px; color:var(--brass-bright); margin-bottom:6px; }
+  .ferman h1{ font-family:'Fraunces', serif; font-weight:700; font-size:26px; line-height:1.1; margin:0 0 6px; color:var(--ivory); }
+  .ferman .sub{ font-size:13px; color:var(--ivory-dim); opacity:.85; }
+  .ferman .leader-line{ margin-top:12px; font-size:12px; color:var(--brass-bright); font-family:'JetBrains Mono',monospace; }
+
+  /* ---------- MOBILE BANNER & TILES ---------- */
+  .rules-banner{
+    width:100%; display:flex; align-items:center; gap:12px;
+    background: linear-gradient(120deg, var(--wine-bright) 0%, var(--wine) 100%);
+    border:1.5px solid var(--brass); border-radius:14px; padding:14px; margin-bottom:20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+  .rules-banner-title{ font-family:'Fraunces',serif; font-weight:900; font-size:16px; color:var(--ivory); }
+  .rules-banner-sub{ font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--brass-bright); margin-top:2px; }
+
+  .board-title{ display:flex; align-items:baseline; justify-content:space-between; margin:0 4px 10px; }
+  .board-title h2{ font-family:'Fraunces',serif; font-weight:600; font-size:16px; margin:0; }
+  .board-title span{ font-size:11px; color:var(--ivory-dim); font-family:'JetBrains Mono',monospace; }
+
+  .tile{
+    background: linear-gradient(180deg, var(--ivory) 0%, var(--ivory-dim) 100%); color:var(--ink);
+    border-radius:12px; padding:14px; display:flex; align-items:center; gap:12px; margin-bottom:10px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+  }
+  .rank-badge{
+    width:36px; height:36px; border-radius:8px; background:var(--felt); color:var(--brass-bright);
+    display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-weight:700; font-size:15px;
+  }
+  .rank-1 .rank-badge{ background:var(--wine-bright); color:var(--ivory); }
+  .tile-name .n{ font-weight:700; font-size:15px; }
+  .tile-name .m{ font-size:11px; color:var(--ink-soft); margin-top:2px; }
+  .tile-points{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:18px; margin-left:auto; }
+
+  /* ---------- MOBILE FAB (ALT MENU) ---------- */
+  .fab{
+    position:fixed; left:16px; right:16px; bottom: env(safe-area-inset-bottom, 16px);
+    background:var(--wine-bright); color:var(--ivory); border:none; border-radius:12px;
+    padding:16px; font-family:'Public Sans',sans-serif; font-weight:700; font-size:15px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4); text-align:center; z-index:40;
+  }
+
+  /* ---------- MOBILE BOTTOM SHEET ---------- */
+  .overlay{ position:fixed; inset:0; background:rgba(6,14,12,0.7); z-index:50; display:none; backdrop-filter: blur(4px); }
+  .overlay.show{ display:block; }
+  .sheet{
+    position:fixed; left:0; right:0; bottom:0; background:var(--felt-deep);
+    border-radius:20px 20px 0 0; max-height:85vh; overflow-y:auto;
+    transform:translateY(100%); transition:transform .3s cubic-bezier(.1, .8, .2, 1); z-index:51;
+    border-top:1px solid var(--line); padding-bottom: env(safe-area-inset-bottom, 20px);
+  }
+  .sheet.show{ transform:translateY(0); }
+  .sheet-handle{ width:40px; height:5px; background:var(--line); border-radius:3px; margin:12px auto 4px; }
+  .sheet-inner{ padding:0 20px 24px; }
+  .close-x{ position:absolute; top:12px; right:16px; background:none; border:none; color:var(--ivory-dim); font-size:22px; padding:10px; }
+
+  .tabs{ display:flex; gap:8px; margin:12px 0 16px; overflow-x:auto; padding-bottom:6px; -webkit-overflow-scrolling:touch; }
+  .tab-btn{ flex:0 0 auto; padding:10px 16px; border-radius:8px; border:1px solid var(--line); background:transparent; color:var(--ivory-dim); font-size:13px; font-weight:600; }
+  .tab-btn.active{ background:var(--brass); color:var(--felt-deep); border-color:var(--brass); }
+
+  .panel{ display:none; }
+  .panel.active{ display:block; }
+
+  /* FORMS */
+  label{ display:block; font-size:12px; color:var(--ivory-dim); margin:14px 0 6px; font-family:'JetBrains Mono',monospace; }
+  select, input{ width:100%; padding:12px; border-radius:8px; border:1px solid var(--line); background:rgba(241,233,216,0.06); color:var(--ivory); font-size:15px; -webkit-appearance:none; }
+  
+  .daytoggle, .sizetoggle{ display:flex; gap:8px; }
+  .daytoggle button, .sizetoggle button{ flex:1; padding:12px; border-radius:8px; border:1px solid var(--line); background:transparent; color:var(--ivory-dim); font-weight:600; font-size:13px; }
+  .daytoggle button.active, .sizetoggle button.active{ background:var(--felt-light); color:var(--ivory); border-color:var(--brass); }
+
+  .slot{ display:flex; align-items:center; gap:10px; margin-bottom:8px; background:rgba(241,233,216,0.05); border-radius:8px; padding:8px 10px; }
+  .slot .badge{ width:28px; height:28px; border-radius:6px; background:var(--felt-light); display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; color:var(--brass-bright); }
+  .slot select{ flex:1; }
+
+  .btn{ width:100%; padding:14px; border-radius:10px; border:none; font-weight:700; font-size:15px; margin-top:16px; }
+  .btn-primary{ background:var(--brass); color:var(--felt-deep); }
+  .rule-item{ display:flex; gap:12px; padding:12px 0; border-bottom:1px solid var(--line); }
+  .rule-num{ width:26px; height:26px; border-radius:6px; background:var(--felt-light); color:var(--brass-bright); display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; }
+  .rule-text{ flex:1; font-size:13.5px; line-height:1.5; color:var(--ivory-dim); }
+  ::-webkit-scrollbar{ width:0; height:0; display:none; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="ferman">
+    <svg class="crown" viewBox="0 0 48 48" fill="none">
+      <path d="M6 34 L4 16 L14 24 L24 10 L34 24 L44 16 L42 34 Z" fill="#c69749" stroke="#7a2e2e" stroke-width="1.5" stroke-linejoin="round"/>
+      <rect x="6" y="34" width="36" height="5" rx="1.5" fill="#7a2e2e"/>
+    </svg>
+    <div class="eyebrow">Temmuz Ayı Kanunları · Tekli Okey</div>
+    <h1>Krallık Liderlik Tablosu</h1>
+    <div class="sub">15 oyuncu · Kral: M. Can Zile</div>
+    <div class="leader-line" id="leaderLine">Yükleniyor…</div>
+  </div>
+
+  <button class="rules-banner" id="openRulesBanner" style="border:none; text-align:left;">
+    <div style="font-size:24px;">📜</div>
+    <div>
+      <div class="rules-banner-title">TEMMUZ AYI KANUNLARI</div>
+      <div class="rules-banner-sub">29 madde · Oku, ezberle, itiraz etme</div>
+    </div>
+  </button>
+
+  <div class="board-title">
+    <h2>Sıralama</h2>
+    <span id="entryCount">0 el</span>
+  </div>
+
+  <div id="board"></div>
+</div>
+
+<button class="fab" id="openFab">✛ El / Puan Ekle</button>
+
+<div class="overlay" id="overlay"></div>
+<div class="sheet" id="sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-inner">
+    <button class="close-x" id="closeSheet">✕</button>
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="manual">Elle Gir</button>
+      <button class="tab-btn" data-tab="adjust">Özel Ceza</button>
+      <button class="tab-btn" data-tab="history">Geçmiş</button>
+      <button class="tab-btn" data-tab="rules">Kanunlar</button>
+    </div>
+
+    <div class="panel active" id="panel-manual">
+      <label>Tarih</label>
+      <input type="date" id="m-date">
+      <label>Gün Tipi</label>
+      <div class="daytoggle">
+        <button type="button" class="day-btn active" data-day="pazartesi">Pazartesi (Tam)</button>
+        <button type="button" class="day-btn" data-day="diger">Diğer Gün (Yarım)</button>
+      </div>
+      <label>Masa Büyüklüğü</label>
+      <div class="sizetoggle">
+        <button type="button" class="size-btn active" data-size="4">4 Kişi</button>
+        <button type="button" class="size-btn" data-size="3">3 Kişi</button>
+      </div>
+      <div id="slotsWrap" style="margin-top:12px;"></div>
+      <button class="btn btn-primary" id="saveManual">Eli Kaydet</button>
+    </div>
+
+    <div class="panel" id="panel-adjust">
+      <label>Oyuncu</label>
+      <select id="a-player"></select>
+      <label>Puan (+/-)</label>
+      <input type="number" id="a-points" placeholder="Örn: 20 veya -10">
+      <label>Açıklama</label>
+      <input type="text" id="a-reason" placeholder="Örn: Tatlı Cezası">
+      <button class="btn btn-primary" id="saveAdjust">Puanı Ekle</button>
+    </div>
+
+    <div class="panel" id="panel-history">
+      <label>Oyuncu Seç</label>
+      <select id="h-player"></select>
+      <div id="historyList" style="margin-top:12px;"></div>
+    </div>
+
+    <div class="panel" id="panel-rules">
+      <input type="text" id="ruleSearch" placeholder="Maddelerde ara…">
+      <div id="rulesList" style="margin-top:12px;"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DEFAULT_PLAYERS = ["Bahattin Konut","Mehmet Can Zile","Ahmet Ziya Bitim","Deniz Kuyluk","Seçkin Yılmaz","Rüştü Korkmaz","Recep Koca","Gökhan Toprak","Veysi Temel","Hakan Göktaş","Murat Gül","Aytek Evren","Fatih Öztekin","Ahmet Erkam Ketmen","Uğur Ede"];
+const RULES = [
+  "Pazartesi kutsal gündür. Değişiklik anketle yapılabilir.",
+  "Temmuz ayı tekli okey ayıdır.",
+  "Puanlama: 1.(4), 2.(2), 3.(-2), Sonuncu(-4). Pazartesi dışı yarısıdır.",
+  "Perfect Kuralı: Bir oyuncu tüm ellerde açarsa +20 alır. Rakipler -10, -15, -20 alır.",
+  "Pazartesi gelmeyenlere o günün en düşüğüne ek -8 ceza yazılır.",
+  "Pazartesi 20:30'dan sonra gelenlere veya 23:00'dan önce ayrılanlara -6 puan verilir.",
+  "20:30 - 23:00 arası masayı terk edene -6 puan yazılır.",
+  "Sahte okey durumunda zar kuralı uygulanır.",
+  "Yere atılan okey yanar, atan oyuncu -4 ceza alır, rakipler +1 alır.",
+  "Masadan kalkışlar puan sırasına göre yapılır. Uymayan -6 ceza alır.",
+  "Renkten bitmede; açan +10, açtıran -10 alır.",
+  "1'den 1'e sıralı renk bitişi 2 katı sayılır.",
+  "Listede olmayanlar yancı olur, oyuna giremez.",
+  "Istaka beyan edilmeden dökülürse okeye dönüyor sayılır.",
+  "Gruba girip çıkanlar 1 kg tatlı borçlanır.",
+  "Kral dışında anket açanın cezası -8 puandır. Ankete katılanlar da -8 yer.",
+  "WhatsApp grubu Kral tarafından yönetilir.",
+  "Gösterge puanı düşürür. Gösterge turu yoktur.",
+  "Eşitlikte az oyunda çok puan alan öne geçer.",
+  "Gruba atılmayan sonuç kağıtları geçersizdir, masaya -6 puan yazılır.",
+  "Son 4 kişi, kişi başı 1 kg Tatlı Saray'dan tatlı alacaktır.",
+  "Raportör Uğur EDE, sözcü Rüştü KORKMAZ'dır.",
+  "Sonraki ayın raportörü sonuncu olan oyuncudur.",
+  "Oturma düzeni zarla belirlenir.",
+  "Yancılar taşa dokunamaz, dokunana -6 yazılır.",
+  "Takozu devirenin açarı ölür ve -6 ceza alır.",
+  "Yanlış açana -10 puan yazılır, rakiplere +2 eklenir.",
+  "Taş sayısı eksik veya fazla olanın açarı ölür.",
+  "Komite kurup gizli ittifak yapanlara Kral -10 puan ceza verir."
+];
+
+let DATA = { players: [...DEFAULT_PLAYERS], entries: [], adjustments: [] };
+
+function loadData(){
+  const local = localStorage.getItem("okey_data");
+  if(local) DATA = JSON.parse(local);
+}
+function saveData(){
+  localStorage.setItem("okey_data", JSON.stringify(DATA));
+  renderBoard();
+}
+
+function pointsTable(day, size){
+  if(size === 4) return day === "pazartesi" ? [4,2,-2,-4] : [2,1,-0.5,-2];
+  return day === "pazartesi" ? [4,2,-4] : [2,1,-2];
+}
+
+function computeTotals(){
+  const totals = {};
+  DATA.players.forEach(p => totals[p] = 0);
+  DATA.entries.forEach(e => {
+    e.results.forEach(r => { if(totals.hasOwnProperty(r.player)) totals[r.player] += r.points; });
+  });
+  DATA.adjustments.forEach(a => { if(totals.hasOwnProperty(a.player)) totals[a.player] += Number(a.points); });
+  return totals;
+}
+
+function renderBoard(){
+  const totals = computeTotals();
+  const rows = DATA.players.map(p => ({name:p, total:totals[p]}));
+  rows.sort((a,b) => b.total - a.total);
+
+  const board = document.getElementById('board');
+  board.innerHTML = "";
+  rows.forEach((r,i) => {
+    const div = document.createElement('div');
+    div.className = 'tile' + (i===0 ? ' rank-1':'');
+    div.innerHTML = `
+      <div class="rank-badge">${i+1}</div>
+      <div class="tile-name"><div class="n">${r.name}</div></div>
+      <div class="tile-points">${r.total}</div>
+    `;
+    board.appendChild(div);
+  });
+  document.getElementById('entryCount').textContent = `${DATA.entries.length} el`;
+  if(rows[0]) document.getElementById('leaderLine').innerHTML = `👑 Lider: <b>${rows[0].name}</b> (${rows[0].total} p)`;
+}
+
+// UI Kontrolleri
+const overlay = document.getElementById('overlay');
+const sheet = document.getElementById('sheet');
+function openSheet(tab){ overlay.classList.add('show'); sheet.classList.add('show'); selectTab(tab); }
+function closeSheet(){ overlay.classList.remove('show'); sheet.classList.remove('show'); }
+document.getElementById('openFab').addEventListener('click', () => openSheet('manual'));
+document.getElementById('openRulesBanner').addEventListener('click', () => openSheet('rules'));
+document.getElementById('closeSheet').addEventListener('click', closeSheet);
+overlay.addEventListener('click', closeSheet);
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => selectTab(btn.dataset.tab));
+});
+
+function selectTab(tab){
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab===tab));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-'+tab).classList.add('active');
+  if(tab==='rules') renderRules();
+  if(tab==='adjust' || tab==='history') fillSelects();
+}
+
+let currentDay = 'pazartesi', currentSize = 4;
+document.getElementById('m-date').value = new Date().toISOString().slice(0,10);
+
+document.querySelectorAll('.day-btn').forEach(b => {
+  b.addEventListener('click', () => {
+    currentDay = b.dataset.day;
+    document.querySelectorAll('.day-btn').forEach(x => x.classList.toggle('active', x===b));
+  });
+});
+document.querySelectorAll('.size-btn').forEach(b => {
+  b.addEventListener('click', () => {
+    currentSize = Number(b.dataset.size);
+    document.querySelectorAll('.size-btn').forEach(x => x.classList.toggle('active', x===b));
+    buildSlots();
+  });
+});
+
+let manualSlots = [];
+function buildSlots(){
+  const wrap = document.getElementById('slotsWrap'); wrap.innerHTML = ""; manualSlots = [];
+  const labels = currentSize === 4 ? ['1.','2.','3.','Son'] : ['1.','2.','Son'];
+  labels.forEach(lab => {
+    const row = document.createElement('div'); row.className = 'slot';
+    const sel = document.createElement('select');
+    sel.innerHTML = `<option value="">- Seç -</option>` + DATA.players.map(p => `<option value="${p}">${p}</option>`).join('');
+    row.innerHTML = `<div class="badge">${lab}</div>`; row.appendChild(sel); wrap.appendChild(row);
+    manualSlots.push(sel);
+  });
+}
+
+document.getElementById('saveManual').addEventListener('click', () => {
+  const table = pointsTable(currentDay, currentSize);
+  const names = manualSlots.map(s => s.value);
+  if(names.some(n => !n)) return alert("Tüm koltukları seçin!");
+  
+  const results = names.map((n,i) => ({player:n, points: table[i]}));
+  DATA.entries.push({ date: document.getElementById('m-date').value, results });
+  saveData(); closeSheet();
+});
+
+function fillSelects(){
+  const opts = DATA.players.map(p => `<option value="${p}">${p}</option>`).join('');
+  document.getElementById('a-player').innerHTML = opts;
+  document.getElementById('h-player').innerHTML = opts;
+}
+
+document.getElementById('saveAdjust').addEventListener('click', () => {
+  DATA.adjustments.push({
+    player: document.getElementById('a-player').value,
+    points: Number(document.getElementById('a-points').value),
+    reason: document.getElementById('a-reason').value
+  });
+  saveData(); closeSheet();
+});
+
+function renderRules(){
+  const wrap = document.getElementById('rulesList');
+  wrap.innerHTML = RULES.map((r,i) => `<div class="rule-item"><div class="rule-num">${i+1}</div><div class="rule-text">${r}</div></div>`).join('');
+}
+
+// Başlangıç
+loadData(); buildSlots(); renderBoard();
+</script>
+</body>
+</html>
