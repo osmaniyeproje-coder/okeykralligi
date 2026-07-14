@@ -32,29 +32,27 @@
   }
   .wrap{ max-width:100%; margin:0 auto; padding:16px 16px 140px 16px; }
   
-  .ferman{ padding: 20px 12px; text-align:center; border-bottom:1px solid var(--line); margin-bottom:20px; }
+  .ferman{ padding: 20px 12px; text-align:center; border-bottom:1px solid var(--line); margin-bottom:15px; }
   .eyebrow{ font-family:'JetBrains Mono', monospace; letter-spacing:.2em; text-transform:uppercase; font-size:10px; color:var(--brass-bright); margin-bottom:6px; }
   .ferman h1{ font-family:'Fraunces', serif; font-weight:700; font-size:26px; color:var(--ivory); margin:0; }
   
-  /* ANA EKRAN GÜNCELLEME BUTONU */
   .quick-update-btn {
-    background: var(--felt-light);
-    color: var(--ivory);
-    border: 1px solid var(--brass);
-    border-radius: 8px;
-    padding: 10px 16px;
-    font-size: 12.5px;
-    font-weight: 600;
-    margin: 14px auto 0 auto;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    transition: transform 0.1s ease;
+    background: var(--felt-light); color: var(--ivory); border: 1px solid var(--brass);
+    border-radius: 8px; padding: 10px 16px; font-size: 12.5px; font-weight: 600;
+    margin: 14px auto 0 auto; display: flex; align-items: center; gap: 8px; cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: transform 0.1s ease;
   }
   .quick-update-btn:active { transform: scale(0.97); }
 
+  /* KANUNLAR AKORDEON */
+  .kanunlar-container { background: rgba(241,233,216,0.04); border: 1px solid var(--line); border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
+  .kanunlar-header { background: rgba(241,233,216,0.02); padding: 12px 16px; color: var(--brass-bright); font-size: 13px; font-weight: 700; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+  .kanunlar-content { padding: 0 16px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; color: var(--ivory-dim); font-size: 13px; line-height: 1.5; }
+  .kanunlar-content.open { max-height: 500px; padding: 16px; overflow-y: auto; border-top: 1px solid var(--line); }
+  .kanun-madde { margin-bottom: 10px; border-bottom: 1px solid rgba(241,233,216,0.05); padding-bottom: 8px; }
+  .kanun-madde:last-child { margin-bottom: 0; border: none; padding-bottom: 0; }
+
+  /* SIRALAMA LİSTESİ */
   .tile{
     background: linear-gradient(180deg, var(--ivory) 0%, var(--ivory-dim) 100%);
     color:var(--ink); border-radius:12px; padding:14px;
@@ -66,13 +64,11 @@
 
   .tile.rank-1 {
     background: linear-gradient(135deg, var(--wine-bright) 0%, var(--wine) 100%);
-    border: 2px solid var(--brass);
-    color: var(--ivory);
+    border: 2px solid var(--brass); color: var(--ivory);
   }
   .tile.rank-last-four {
     background: linear-gradient(135deg, var(--royal-purple-light) 0%, var(--royal-purple) 100%);
-    border: 1px dashed var(--brass-bright);
-    color: var(--ivory);
+    border: 1px dashed var(--brass-bright); color: var(--ivory);
   }
 
   .rank-badge{
@@ -88,26 +84,28 @@
   .tile-name .n{ font-weight:700; font-size:14.5px; }
   .tile-points{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:16px; margin-left:auto; }
   
+  /* GEÇMİŞ LİSTESİ */
+  .history-section { margin-top: 15px; max-height: 180px; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 8px; padding: 10px; border: 1px solid var(--line); }
+  .history-item { font-size: 12px; padding: 6px 0; border-bottom: 1px solid rgba(241,233,216,0.05); color: var(--ivory-dim); display: flex; justify-content: space-between; }
+  .history-item:last-child { border: none; }
+  .hist-pts { font-family: 'JetBrains Mono'; font-weight: 700; }
+  .hist-pts.pos { color: #5af78e; }
+  .hist-pts.neg { color: #ff5c5c; }
+
   .action-buttons { position:fixed; left:16px; right:16px; bottom:16px; display:flex; gap:8px; z-index:40; }
   .fab{ flex:1; background:var(--wine-bright); color:var(--ivory); border:none; border-radius:12px; padding:16px; font-weight:700; font-size:14px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
   .fab-share { background: var(--felt-light); border: 1.5px solid var(--brass); }
 
   .overlay{ position:fixed; inset:0; background:rgba(6,14,12,0.75); z-index:50; display:none; backdrop-filter: blur(4px); }
   .overlay.show{ display:block; }
-  .sheet{ position:fixed; left:0; right:0; bottom:0; background:var(--felt-deep); border-radius:20px 20px 0 0; max-height:85vh; overflow-y:auto; transform:translateY(100%); transition:transform .3s ease; z-index:51; border-top:1px solid var(--line); padding-bottom: 20px; }
+  .sheet{ position:fixed; left:0; right:0; bottom:0; background:var(--felt-deep); border-radius:20px 20px 0 0; max-height:90vh; overflow-y:auto; transform:translateY(100%); transition:transform .3s ease; z-index:51; border-top:1px solid var(--line); padding-bottom: 20px; }
   .sheet.show{ transform:translateY(0); }
   .sheet-inner{ padding:20px; position:relative; }
   .close-x{ position:absolute; top:12px; right:16px; background:none; border:none; color:var(--ivory-dim); font-size:22px; }
 
-  .tabs{ display:flex; gap:8px; margin-bottom:16px; overflow-x:auto; }
-  .tab-btn{ padding:10px 16px; border-radius:8px; border:1px solid var(--line); background:transparent; color:var(--ivory-dim); font-size:13px; font-weight:600; white-space:nowrap; }
-  .tab-btn.active{ background:var(--brass); color:var(--felt-deep); border-color:var(--brass); }
-  .panel{ display:none; }
-  .panel.active{ display:block; }
-
-  label{ display:block; font-size:11px; color:var(--ivory-dim); margin:14px 0 6px; font-family:'JetBrains Mono'; text-transform: uppercase;}
-  select, input{ width:100%; padding:12px; border-radius:8px; border:1px solid var(--line); background:rgba(241,233,216,0.06); color:var(--ivory); font-size:14px; outline:none;}
-  .btn{ width:100%; padding:14px; border-radius:10px; border:none; font-weight:700; font-size:14.5px; margin-top:16px; cursor:pointer;}
+  label{ display:block; font-size:11px; color:var(--ivory-dim); margin:12px 0 4px; font-family:'JetBrains Mono'; text-transform: uppercase;}
+  select, input{ width:100%; padding:11px; border-radius:8px; border:1px solid var(--line); background:rgba(241,233,216,0.06); color:var(--ivory); font-size:14px; outline:none;}
+  .btn{ width:100%; padding:14px; border-radius:10px; border:none; font-weight:700; font-size:14.5px; margin-top:14px; cursor:pointer;}
   .btn-primary{ background:var(--brass); color:var(--felt-deep); }
 </style>
 </head>
@@ -119,10 +117,23 @@
     <h1>Krallık Liderlik Tablosu</h1>
     <div style="font-size:12px; color:var(--brass-bright); margin-top:6px;" id="leaderLine">Yükleniyor…</div>
     
-    <!-- ANA EKRAN GÜNCELLEME BUTONU -->
     <button class="quick-update-btn" id="quickUpdateBtn">
       🔄 Yenile / Kodu Yapıştır
     </button>
+  </div>
+
+  <!-- TAM METİN KANUNLAR -->
+  <div class="kanunlar-container">
+    <div class="kanunlar-header" id="toggleKanun">
+      <span>📜 Krallık Kanunları (Tam Metin)</span>
+      <span id="kanunArrow">▼</span>
+    </div>
+    <div class="kanunlar-content" id="kanunContent">
+      <div class="kanun-madde"><b>Madde 1:</b> Her el bitiminde okey atan oyuncu +20 puan kazanır. Çifte giderek biten oyuncu ekstra +10 puan daha hanesine yazdırır.</div>
+      <div class="kanun-madde"><b>Madde 2:</b> Yanlış biten, masaya yanlış taş açan veya sahte okeyi yanlış yere koyan oyuncu anında masadaki herkese -15 puan ceza yer.</div>
+      <div class="kanun-madde"><b>Madde 3:</b> Sıralamada son 4 sırada kalan oyuncular, turnuva ayı bitiminde şampiyona ve üst sıralardaki oyunculara Tatlı Saray'dan baklava ısmarlamakla yükümlüdür.</div>
+      <div class="kanun-madde"><b>Madde 4:</b> Oyun esnasında masayı haklı bir gerekçe olmaksızın terk eden veya aşırı süre harcayarak oyunu yavaşlatan oyuncular raportör kararıyla -10 ceza puanı alabilir.</div>
+    </div>
   </div>
 
   <div id="board"></div>
@@ -135,15 +146,13 @@
 
 <div class="overlay" id="overlay"></div>
 
-<!-- PUAN DEĞİŞİM PANELİ -->
+<!-- OYUNCU DETAY VE PUAN GİRİŞ PANELİ -->
 <div class="sheet" id="sheet">
   <div class="sheet-inner">
     <button class="close-x" id="closeSheet">✕</button>
-    <div class="tabs">
-      <button class="tab-btn active" data-tab="adjust">Hızlı Puan / Ceza</button>
-    </div>
+    <h3 id="sheetTitle" style="color:var(--ivory); font-family:'Fraunces'; margin:0 0 10px 0;">Puan / Ceza İşlemleri</h3>
 
-    <div class="panel active" id="panel-adjust">
+    <div class="panel active">
       <label>Yetkili Şifresi</label>
       <input type="password" id="admin-pass" placeholder="Uğur veya Can şifresi">
       
@@ -151,12 +160,18 @@
       <select id="a-player"></select>
       
       <label>Puan Değişimi (+/-)</label>
-      <input type="number" id="a-points" placeholder="Örn: 20 veya -10">
+      <input type="number" id="a-points" placeholder="Örn: 20 veya -15">
       
       <label>Gerekçe / Açıklama</label>
-      <input type="text" id="a-reason" placeholder="Örn: Tatlı Cezası / Madde 9">
+      <input type="text" id="a-reason" placeholder="Örn: Madde 2 - Yanlış Bitme">
       
-      <button class="btn btn-primary" id="saveAdjust">Puanı İşle</button>
+      <button class="btn btn-primary" id="saveAdjust">Değişikliği Kaydet</button>
+      
+      <!-- GEÇMİŞ CEZA / PUAN ALANI -->
+      <h4 style="color:var(--brass-bright); margin:20px 0 5px 0; font-size:13px; font-family:'JetBrains Mono'">📜 OYUNCU PUAN GEÇMİŞİ</h4>
+      <div class="history-section" id="playerHistory">
+        <div style="color:var(--ivory-dim); font-size:12px; text-align:center; padding:10px;">Henüz bu oyuncuya ait bir geçmiş bulunmuyor.</div>
+      </div>
     </div>
   </div>
 </div>
@@ -165,13 +180,13 @@
 <div class="sheet" id="shareSheet">
   <div class="sheet-inner">
     <button class="close-x" id="closeShareSheet">✕</button>
-    <h3 style="color:var(--ivory); font-family:'Fraunces'; margin: 0 0 10px 0;">Veri Eşitleme ve Paylaşım</h3>
-    <p style="color:var(--ivory-dim); font-size:12px; line-height:1.4;">Yazılan puanların diğer oyuncularda da görünmesi için güncel veriyi kopyalayıp gruba atın. Diğer üyeler bu kodu kopyalayıp buraya yapıştırarak kendi tablolarını güncelleyebilirler.</p>
+    <h3 style="color:var(--ivory); font-family:'Fraunces'; margin: 0 0 10px 0;">Veri Paylaşımı ve Eşitleme</h3>
+    <p style="color:var(--ivory-dim); font-size:12px; line-height:1.4;">Yazılan puanları gruba göndermek için üstteki kodu kopyalayın. Gruptan gelen yeni puanları uygulamak için alttaki kutuya yapıştırın.</p>
     
-    <label>Mevcut Veri Kodu (Kopyalayıp Gruba Atın)</label>
+    <label>Mevcut Veri Kodu (Gruba Atmak İçin)</label>
     <input type="text" id="exportData" readonly onclick="this.select();">
     
-    <label style="margin-top:20px;">Gruptan Gelen Kod (Yapıştırıp Güncelleyin)</label>
+    <label style="margin-top:15px;">Gruptan Gelen Kod (Yapıştırıp Güncellemek İçin)</label>
     <input type="text" id="importData" placeholder="Buraya yapıştırın...">
     
     <button class="btn btn-primary" id="saveImport">Veriyi İçe Aktar ve Yenile</button>
@@ -183,6 +198,14 @@ const ADMIN_PASSWORDS = ["ugur123", "can123"];
 const DEFAULT_PLAYERS = ["Bahattin Konut","Mehmet Can Zile","Ahmet Ziya Bitim","Deniz Kuyluk","Seçkin Yılmaz","Rüştü Korkmaz","Recep Koca","Gökhan Toprak","Veysi Temel","Hakan Göktaş","Murat Gül","Aytek Evren","Fatih Öztekin","Ahmet Erkam Ketmen","Uğur Ede"];
 let DATA = { players: [...DEFAULT_PLAYERS], adjustments: [] };
 const STORAGE_KEY = "okey_krallik_v3";
+
+// AKORDEON AÇILIŞ KAPANMA KONTROLÜ
+document.getElementById('toggleKanun').addEventListener('click', () => {
+  const content = document.getElementById('kanunContent');
+  const arrow = document.getElementById('kanunArrow');
+  content.classList.toggle('open');
+  arrow.innerHTML = content.classList.contains('open') ? "▲" : "▼";
+});
 
 function loadData(){
   const local = localStorage.getItem(STORAGE_KEY);
@@ -214,30 +237,25 @@ function renderBoard(){
     const div = document.createElement('div');
     div.className = 'tile';
     
-    if (i === 0) {
-      div.className += ' rank-1';
-    } else if (i >= rows.length - 4) {
-      div.className += ' rank-last-four';
-    }
+    if (i === 0) div.className += ' rank-1';
+    else if (i >= rows.length - 4) div.className += ' rank-last-four';
 
     let badgeIcon = "";
     if (i === 0) badgeIcon = " 👑";
-    if (i >= rows.length - 4) badgeIcon = " %F0%9F%A5%9E"; // Baklava/Tatlı tabağı çözümü
-    
-    if (r.name === "Ahmet Erkam Ketmen") {
-      badgeIcon += " 🥜"; 
-    }
+    if (i >= rows.length - 4) badgeIcon = " 🥞";
+    if (r.name === "Ahmet Erkam Ketmen") badgeIcon += " 🥜"; 
 
     div.innerHTML = `
       <div class="rank-badge">${i+1}</div>
-      <div class="tile-name">
-        <div class="n">${r.name}${decodeURIComponent(badgeIcon)}</div>
-      </div>
+      <div class="tile-name"><div class="n">${r.name}${badgeIcon}</div></div>
       <div class="tile-points">${r.total}</div>
     `;
 
+    // Oyuncuya tıklanınca doğrudan onun paneli ve geçmişi açılsın
     div.addEventListener('click', () => {
+      fillSelect();
       document.getElementById('a-player').value = r.name;
+      showPlayerHistory(r.name);
       openSheet('sheet');
     });
 
@@ -248,6 +266,28 @@ function renderBoard(){
   document.getElementById('exportData').value = btoa(unescape(encodeURIComponent(JSON.stringify(DATA))));
 }
 
+// OYUNCUNUN GEÇMİŞ CEZA VE PUANLARINI GÖSTERME
+function showPlayerHistory(playerName) {
+  const historyContainer = document.getElementById('playerHistory');
+  const filtered = DATA.adjustments.filter(a => a.player === playerName);
+  
+  if(filtered.length === 0) {
+    historyContainer.innerHTML = `<div style="color:var(--ivory-dim); font-size:12px; text-align:center; padding:10px;">Henüz bu oyuncuya ait bir puan/ceza geçmişi yok.</div>`;
+    return;
+  }
+  
+  // Ters kronolojik sıra (en yeni en üstte)
+  historyContainer.innerHTML = filtered.reverse().map(a => {
+    const isPos = Number(a.points) >= 0;
+    return `
+      <div class="history-item">
+        <span>• ${a.reason}</span>
+        <span class="hist-pts ${isPos ? 'pos' : 'neg'}">${isPos ? '+' : ''}${a.points}</span>
+      </div>
+    `;
+  }).join('');
+}
+
 const overlay = document.getElementById('overlay');
 const sheet = document.getElementById('sheet');
 const shareSheet = document.getElementById('shareSheet');
@@ -255,7 +295,6 @@ const shareSheet = document.getElementById('shareSheet');
 function openSheet(targetId){
   overlay.classList.add('show');
   document.getElementById(targetId).classList.add('show');
-  fillSelect();
 }
 function closeAllSheets(){
   overlay.classList.remove('show');
@@ -263,7 +302,11 @@ function closeAllSheets(){
   shareSheet.classList.remove('show');
 }
 
-document.getElementById('openFab').addEventListener('click', () => openSheet('sheet'));
+document.getElementById('openFab').addEventListener('click', () => {
+  fillSelect();
+  if(DATA.players.length > 0) showPlayerHistory(document.getElementById('a-player').value);
+  openSheet('sheet');
+});
 document.getElementById('openShare').addEventListener('click', () => openSheet('shareSheet'));
 document.getElementById('quickUpdateBtn').addEventListener('click', () => openSheet('shareSheet'));
 document.getElementById('closeSheet').addEventListener('click', closeAllSheets);
@@ -271,21 +314,27 @@ document.getElementById('closeShareSheet').addEventListener('click', closeAllShe
 overlay.addEventListener('click', closeAllSheets);
 
 function fillSelect(){
-  document.getElementById('a-player').innerHTML = DATA.players.map(p => `<option value="${p}">${p}</option>`).join('');
+  const select = document.getElementById('a-player');
+  // Sadece içi boşsa doldur ki tıklanan oyuncu değişmesin
+  if(!select.innerHTML) {
+    select.innerHTML = DATA.players.map(p => `<option value="${p}">${p}</option>`).join('');
+    select.addEventListener('change', (e) => showPlayerHistory(e.target.value));
+  }
 }
 
+// PUAN / CEZA KAYDETME
 document.getElementById('saveAdjust').addEventListener('click', () => {
   const enteredPass = document.getElementById('admin-pass').value;
   const player = document.getElementById('a-player').value;
   const points = document.getElementById('a-points').value;
-  const reason = document.getElementById('a-reason').value || "Manuel Giriş";
+  const reason = document.getElementById('a-reason').value || "Manuel Düzenleme";
 
   if(!ADMIN_PASSWORDS.includes(enteredPass)) {
-    alert("❌ Hatalı Yetkili Şifresi!");
+    alert("❌ Hatalı Yetkili Şifresi! Yetkiniz yok.");
     return;
   }
   if(!points) {
-    alert("Lütfen geçerli bir puan girin!");
+    alert("Lütfen geçerli bir puan değeri girin!");
     return;
   }
 
@@ -295,12 +344,13 @@ document.getElementById('saveAdjust').addEventListener('click', () => {
   document.getElementById('admin-pass').value = "";
   document.getElementById('a-points').value = "";
   document.getElementById('a-reason').value = "";
-  alert("✅ Puan kaydedildi!");
+  alert(`✅ ${player} için puan güncellemesi başarıyla işlendi!`);
 });
 
+// VERİ İÇE AKTARMA
 document.getElementById('saveImport').addEventListener('click', () => {
   const importValue = document.getElementById('importData').value.trim();
-  if(!importValue) return alert("Lütfen veriyi yapıştırın.");
+  if(!importValue) return alert("Lütfen gruptan gelen kodu kutuya yapıştırın.");
   try {
     const decoded = JSON.parse(decodeURIComponent(escape(atob(importValue))));
     if(decoded.players && decoded.adjustments) {
@@ -308,12 +358,12 @@ document.getElementById('saveImport').addEventListener('click', () => {
       saveData();
       closeAllSheets();
       document.getElementById('importData').value = "";
-      alert("🎉 Tablo başarıyla güncellendi ve eşitlendi!");
+      alert("🎉 Tablo ve ceza geçmişi başarıyla eşitlendi!");
     } else {
-      alert("Hatalı kod formatı.");
+      alert("Hatalı veri yapısı.");
     }
   } catch(e) {
-    alert("Geçersiz veri kodu.");
+    alert("Geçersiz veri kodu!");
   }
 });
 
