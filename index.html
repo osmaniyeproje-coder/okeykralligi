@@ -36,6 +36,25 @@
   .eyebrow{ font-family:'JetBrains Mono', monospace; letter-spacing:.2em; text-transform:uppercase; font-size:10px; color:var(--brass-bright); margin-bottom:6px; }
   .ferman h1{ font-family:'Fraunces', serif; font-weight:700; font-size:26px; color:var(--ivory); margin:0; }
   
+  /* ANA EKRAN GÜNCELLEME BUTONU */
+  .quick-update-btn {
+    background: var(--felt-light);
+    color: var(--ivory);
+    border: 1px solid var(--brass);
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 12.5px;
+    font-weight: 600;
+    margin: 14px auto 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    transition: transform 0.1s ease;
+  }
+  .quick-update-btn:active { transform: scale(0.97); }
+
   .tile{
     background: linear-gradient(180deg, var(--ivory) 0%, var(--ivory-dim) 100%);
     color:var(--ink); border-radius:12px; padding:14px;
@@ -99,6 +118,11 @@
     <div class="eyebrow">Temmuz Ayı Kanunları</div>
     <h1>Krallık Liderlik Tablosu</h1>
     <div style="font-size:12px; color:var(--brass-bright); margin-top:6px;" id="leaderLine">Yükleniyor…</div>
+    
+    <!-- ANA EKRAN GÜNCELLEME BUTONU -->
+    <button class="quick-update-btn" id="quickUpdateBtn">
+      🔄 Yenile / Kodu Yapıştır
+    </button>
   </div>
 
   <div id="board"></div>
@@ -111,6 +135,7 @@
 
 <div class="overlay" id="overlay"></div>
 
+<!-- PUAN DEĞİŞİM PANELİ -->
 <div class="sheet" id="sheet">
   <div class="sheet-inner">
     <button class="close-x" id="closeSheet">✕</button>
@@ -136,6 +161,7 @@
   </div>
 </div>
 
+<!-- PAYLAŞIM VE GÜNCELLEME PANELİ -->
 <div class="sheet" id="shareSheet">
   <div class="sheet-inner">
     <button class="close-x" id="closeShareSheet">✕</button>
@@ -153,7 +179,7 @@
 </div>
 
 <script>
-const ADMIN_PASSWORDS = ["baho123", "can123"];
+const ADMIN_PASSWORDS = ["ugur123", "can123"];
 const DEFAULT_PLAYERS = ["Bahattin Konut","Mehmet Can Zile","Ahmet Ziya Bitim","Deniz Kuyluk","Seçkin Yılmaz","Rüştü Korkmaz","Recep Koca","Gökhan Toprak","Veysi Temel","Hakan Göktaş","Murat Gül","Aytek Evren","Fatih Öztekin","Ahmet Erkam Ketmen","Uğur Ede"];
 let DATA = { players: [...DEFAULT_PLAYERS], adjustments: [] };
 const STORAGE_KEY = "okey_krallik_v3";
@@ -194,12 +220,10 @@ function renderBoard(){
       div.className += ' rank-last-four';
     }
 
-    // İkon Belirleme Mantığı
     let badgeIcon = "";
     if (i === 0) badgeIcon = " 👑";
-    if (i >= rows.length - 4) badgeIcon = " 🥞"; // Son 4 için baklava/tatlı tabağı
+    if (i >= rows.length - 4) badgeIcon = " %F0%9F%A5%9E"; // Baklava/Tatlı tabağı çözümü
     
-    // Ahmet Erkam Ketmen için şans fıstıkları (taşlar)
     if (r.name === "Ahmet Erkam Ketmen") {
       badgeIcon += " 🥜"; 
     }
@@ -207,7 +231,7 @@ function renderBoard(){
     div.innerHTML = `
       <div class="rank-badge">${i+1}</div>
       <div class="tile-name">
-        <div class="n">${r.name}${badgeIcon}</div>
+        <div class="n">${r.name}${decodeURIComponent(badgeIcon)}</div>
       </div>
       <div class="tile-points">${r.total}</div>
     `;
@@ -241,6 +265,7 @@ function closeAllSheets(){
 
 document.getElementById('openFab').addEventListener('click', () => openSheet('sheet'));
 document.getElementById('openShare').addEventListener('click', () => openSheet('shareSheet'));
+document.getElementById('quickUpdateBtn').addEventListener('click', () => openSheet('shareSheet'));
 document.getElementById('closeSheet').addEventListener('click', closeAllSheets);
 document.getElementById('closeShareSheet').addEventListener('click', closeAllSheets);
 overlay.addEventListener('click', closeAllSheets);
@@ -283,7 +308,7 @@ document.getElementById('saveImport').addEventListener('click', () => {
       saveData();
       closeAllSheets();
       document.getElementById('importData').value = "";
-      alert("🎉 Tablo eşitlendi!");
+      alert("🎉 Tablo başarıyla güncellendi ve eşitlendi!");
     } else {
       alert("Hatalı kod formatı.");
     }
