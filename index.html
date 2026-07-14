@@ -6,7 +6,7 @@
 <title>Temmuz Ayı Krallığı — Liderlik Tablosu</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2 family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --felt-deep:#0e2622;
@@ -36,26 +36,47 @@
   .eyebrow{ font-family:'JetBrains Mono', monospace; letter-spacing:.2em; text-transform:uppercase; font-size:10px; color:var(--brass-bright); margin-bottom:6px; }
   .ferman h1{ font-family:'Fraunces', serif; font-weight:700; font-size:26px; color:var(--ivory); margin:0; }
   
-  .quick-update-btn {
-    background: var(--felt-light); color: var(--ivory); border: 1px solid var(--brass);
-    border-radius: 8px; padding: 10px 16px; font-size: 12.5px; font-weight: 600;
-    margin: 14px auto 0 auto; display: flex; align-items: center; gap: 8px; cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: transform 0.1s ease;
+  /* DEASA VE DİKKAT ÇEKİCİ GÜNCELLEME BUTONU */
+  .giant-update-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    color: white;
+    border: 2px solid #60a5fa;
+    border-radius: 14px;
+    padding: 18px;
+    font-size: 16px;
+    font-weight: 700;
+    margin: 16px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(29, 78, 216, 0.4);
+    transition: all 0.2s ease;
+    animation: pulseGlow 2s infinite ease-in-out;
   }
-  .quick-update-btn:active { transform: scale(0.97); }
+  .giant-update-btn:active { transform: scale(0.96); box-shadow: 0 3px 10px rgba(29, 78, 216, 0.4); }
+  
+  @keyframes pulseGlow {
+    0% { box-shadow: 0 6px 20px rgba(29, 78, 216, 0.4); }
+    50% { box-shadow: 0 6px 30px rgba(96, 165, 250, 0.7); border-color: #93c5fd; }
+    100% { box-shadow: 0 6px 20px rgba(29, 78, 216, 0.4); }
+  }
 
   /* KANUNLAR AKORDEON */
   .kanunlar-container { background: rgba(241,233,216,0.04); border: 1px solid var(--line); border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
-  .kanunlar-header { background: rgba(241,233,216,0.02); padding: 12px 16px; color: var(--brass-bright); font-size: 13px; font-weight: 700; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-  .kanunlar-content { padding: 0 16px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; color: var(--ivory-dim); font-size: 13px; line-height: 1.5; }
-  .kanunlar-content.open { max-height: 500px; padding: 16px; overflow-y: auto; border-top: 1px solid var(--line); }
-  .kanun-madde { margin-bottom: 10px; border-bottom: 1px solid rgba(241,233,216,0.05); padding-bottom: 8px; }
+  .kanunlar-header { background: rgba(241,233,216,0.02); padding: 14px 16px; color: var(--brass-bright); font-size: 14px; font-weight: 700; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+  .kanunlar-content { padding: 0 16px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; color: var(--ivory-dim); font-size: 13.5px; line-height: 1.6; }
+  .kanunlar-content.open { max-height: 1000px; padding: 16px; overflow-y: auto; border-top: 1px solid var(--line); }
+  .kanun-madde { margin-bottom: 14px; border-bottom: 1px solid rgba(241,233,216,0.05); padding-bottom: 12px; }
   .kanun-madde:last-child { margin-bottom: 0; border: none; padding-bottom: 0; }
+  .kanun-title { color: var(--ivory); font-weight: 700; display: block; margin-bottom: 4px; }
 
   /* SIRALAMA LİSTESİ */
   .tile{
     background: linear-gradient(180deg, var(--ivory) 0%, var(--ivory-dim) 100%);
-    color:var(--ink); border-radius:12px; padding:14px;
+    color:var(--ink); border-radius:12px; padding:15px;
     display:flex; align-items:center; gap:12px; margin-bottom:8px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.15); cursor:pointer;
     transition: transform 0.1s ease;
@@ -72,67 +93,83 @@
   }
 
   .rank-badge{
-    width:32px; height:32px; border-radius:8px;
+    width:34px; height:34px; border-radius:8px;
     background:var(--felt); color:var(--brass-bright);
     display:flex; align-items:center; justify-content:center;
-    font-family:'JetBrains Mono',monospace; font-weight:700; font-size:13px;
+    font-family:'JetBrains Mono',monospace; font-weight:700; font-size:14px;
   }
   .rank-1 .rank-badge { background: var(--brass); color: var(--wine); }
   .rank-last-four .rank-badge { background: var(--felt-deep); color: #dfa6e2; }
 
   .tile-name{ flex:1; min-width:0; display:flex; align-items:center; gap:6px; }
-  .tile-name .n{ font-weight:700; font-size:14.5px; }
-  .tile-points{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:16px; margin-left:auto; }
+  .tile-name .n{ font-weight:700; font-size:15px; }
+  .tile-points{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:18px; margin-left:auto; }
   
   /* GEÇMİŞ LİSTESİ */
-  .history-section { margin-top: 15px; max-height: 180px; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 8px; padding: 10px; border: 1px solid var(--line); }
-  .history-item { font-size: 12px; padding: 6px 0; border-bottom: 1px solid rgba(241,233,216,0.05); color: var(--ivory-dim); display: flex; justify-content: space-between; }
+  .history-section { margin-top: 15px; max-height: 200px; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 8px; padding: 12px; border: 1px solid var(--line); }
+  .history-item { font-size: 13px; padding: 8px 0; border-bottom: 1px solid rgba(241,233,216,0.05); color: var(--ivory-dim); display: flex; justify-content: space-between; gap: 10px; }
   .history-item:last-child { border: none; }
-  .hist-pts { font-family: 'JetBrains Mono'; font-weight: 700; }
+  .hist-pts { font-family: 'JetBrains Mono'; font-weight: 700; white-space: nowrap; }
   .hist-pts.pos { color: #5af78e; }
   .hist-pts.neg { color: #ff5c5c; }
 
+  /* PANEL ALT BUTONLARI */
   .action-buttons { position:fixed; left:16px; right:16px; bottom:16px; display:flex; gap:8px; z-index:40; }
-  .fab{ flex:1; background:var(--wine-bright); color:var(--ivory); border:none; border-radius:12px; padding:16px; font-weight:700; font-size:14px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
-  .fab-share { background: var(--felt-light); border: 1.5px solid var(--brass); }
+  .fab{ flex:1; background:var(--felt-light); color:var(--ivory); border:1px solid var(--brass); border-radius:12px; padding:16px; font-weight:700; font-size:14px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); cursor: pointer; }
+  .fab-main { background: var(--wine-bright); border: none; }
 
   .overlay{ position:fixed; inset:0; background:rgba(6,14,12,0.75); z-index:50; display:none; backdrop-filter: blur(4px); }
   .overlay.show{ display:block; }
-  .sheet{ position:fixed; left:0; right:0; bottom:0; background:var(--felt-deep); border-radius:20px 20px 0 0; max-height:90vh; overflow-y:auto; transform:translateY(100%); transition:transform .3s ease; z-index:51; border-top:1px solid var(--line); padding-bottom: 20px; }
+  .sheet{ position:fixed; left:0; right:0; bottom:0; background:var(--felt-deep); border-radius:20px 20px 0 0; max-height:92vh; overflow-y:auto; transform:translateY(100%); transition:transform .3s ease; z-index:51; border-top:1px solid var(--line); padding-bottom: 25px; }
   .sheet.show{ transform:translateY(0); }
   .sheet-inner{ padding:20px; position:relative; }
-  .close-x{ position:absolute; top:12px; right:16px; background:none; border:none; color:var(--ivory-dim); font-size:22px; }
+  .close-x{ position:absolute; top:12px; right:16px; background:none; border:none; color:var(--ivory-dim); font-size:24px; cursor: pointer; }
 
-  label{ display:block; font-size:11px; color:var(--ivory-dim); margin:12px 0 4px; font-family:'JetBrains Mono'; text-transform: uppercase;}
-  select, input{ width:100%; padding:11px; border-radius:8px; border:1px solid var(--line); background:rgba(241,233,216,0.06); color:var(--ivory); font-size:14px; outline:none;}
-  .btn{ width:100%; padding:14px; border-radius:10px; border:none; font-weight:700; font-size:14.5px; margin-top:14px; cursor:pointer;}
+  label{ display:block; font-size:11px; color:var(--ivory-dim); margin:14px 0 4px; font-family:'JetBrains Mono'; text-transform: uppercase;}
+  select, input{ width:100%; padding:12px; border-radius:8px; border:1px solid var(--line); background:rgba(241,233,216,0.06); color:var(--ivory); font-size:15px; outline:none;}
+  .btn{ width:100%; padding:15px; border-radius:10px; border:none; font-weight:700; font-size:15px; margin-top:16px; cursor:pointer;}
   .btn-primary{ background:var(--brass); color:var(--felt-deep); }
+  .status-text { text-align: center; font-size: 12px; color: var(--brass-bright); margin-bottom: 10px; font-family: 'JetBrains Mono'; }
 </style>
 </head>
 <body>
 
 <div class="wrap">
   <div class="ferman">
-    <div class="eyebrow">Temmuz Ayı Kanunları</div>
+    <div class="eyebrow">Temmuz Ayı Meclis Kararları</div>
     <h1>Krallık Liderlik Tablosu</h1>
-    <div style="font-size:12px; color:var(--brass-bright); margin-top:6px;" id="leaderLine">Yükleniyor…</div>
+    <div style="font-size:13px; color:var(--brass-bright); margin-top:6px;" id="leaderLine">Yükleniyor…</div>
+    <div class="status-text" id="syncStatus">Bulut Bağlantısı Hazır</div>
     
-    <button class="quick-update-btn" id="quickUpdateBtn">
-      🔄 Yenile / Kodu Yapıştır
+    <!-- YENİ DEVASA CANLI GÜNCELLEME BUTONU -->
+    <button class="giant-update-btn" id="quickUpdateBtn">
+      ⚡ TABLOYU GÜNCELLE VE EŞİTLE ⚡
     </button>
   </div>
 
   <!-- TAM METİN KANUNLAR -->
   <div class="kanunlar-container">
     <div class="kanunlar-header" id="toggleKanun">
-      <span>📜 Krallık Kanunları (Tam Metin)</span>
+      <span>📜 Krallık Resmi Kanunları (Tam Metin)</span>
       <span id="kanunArrow">▼</span>
     </div>
     <div class="kanunlar-content" id="kanunContent">
-      <div class="kanun-madde"><b>Madde 1:</b> Her el bitiminde okey atan oyuncu +20 puan kazanır. Çifte giderek biten oyuncu ekstra +10 puan daha hanesine yazdırır.</div>
-      <div class="kanun-madde"><b>Madde 2:</b> Yanlış biten, masaya yanlış taş açan veya sahte okeyi yanlış yere koyan oyuncu anında masadaki herkese -15 puan ceza yer.</div>
-      <div class="kanun-madde"><b>Madde 3:</b> Sıralamada son 4 sırada kalan oyuncular, turnuva ayı bitiminde şampiyona ve üst sıralardaki oyunculara Tatlı Saray'dan baklava ısmarlamakla yükümlüdür.</div>
-      <div class="kanun-madde"><b>Madde 4:</b> Oyun esnasında masayı haklı bir gerekçe olmaksızın terk eden veya aşırı süre harcayarak oyunu yavaşlatan oyuncular raportör kararıyla -10 ceza puanı alabilir.</div>
+      <div class="kanun-madde">
+        <span class="kanun-title">Madde 1: Okey ve Çifte Gitme Ödülleri</span>
+        Her el bitiminde okey atarak elini tamamlayan oyuncu hanesine kesin olarak +20 puan yazdırır. Eğer oyuncu elini normal değil de çifte giderek (çift açarak) bitirirse ekstra +10 puan daha kazanır ve toplam kazancı +30 puan olarak tescil edilir.
+      </div>
+      <div class="kanun-madde">
+        <span class="kanun-title">Madde 2: Hatalı Açma ve Sahte Okey Cezaları</span>
+        Masaya yanlış taş açan, seri/per hesaplamasını hatalı yapan veya sahte okeyi per kurallarına aykırı şekilde yanlış yere yerleştirip oyunu bozan oyuncu, o el hak iddia edemez ve masadaki diğer tüm oyuncuların hanesine -15 puan ceza puanı olarak raportör tarafından doğrudan işlenir.
+      </div>
+      <div class="kanun-madde">
+        <span class="kanun-title">Madde 3: Son 4 Sıra ve Baklava Yükümlülüğü</span>
+        Turnuva ayı (Temmuz) nihayete erdiğinde, genel sıralamada son 4 sırada kalan oyuncular "Baklava Borçlusu" ilan edilir. Bu oyuncular, turnuva şampiyonuna (Kral) ve üst sıralarda yer alan elite Tatlı Saray'dan fıstıklı baklava ısmarlamakla mükelleftir.
+      </div>
+      <div class="kanun-madde">
+        <span class="kanun-title">Madde 4: Masayı Terk Etme ve Yavaş Oyun Raconu</span>
+        Geçerli, mücbir ve masadakilerce kabul görmüş bir mazereti olmaksızın masayı ani olarak terk eden ya da kendi sırasında aşırı süre harcayarak oyun akışını kasıtlı veya süreklilik arz edecek şekilde yavaşlatan oyuncular, yetkili raportörlerin ortak kararı doğrultusunda el başına -10 ceza puanı ile tecziye edilir.
+      </div>
     </div>
   </div>
 
@@ -140,8 +177,8 @@
 </div>
 
 <div class="action-buttons">
-  <button class="fab fab-share" id="openShare">📤 Veriyi Paylaş</button>
-  <button class="fab" id="openFab">✛ Puan/Ceza Ekle</button>
+  <button class="fab" id="openBackup">📦 Manuel Yedek</button>
+  <button class="fab fab-main" id="openFab">✛ Hızlı Puan/Ceza Ekle</button>
 </div>
 
 <div class="overlay" id="overlay"></div>
@@ -150,56 +187,60 @@
 <div class="sheet" id="sheet">
   <div class="sheet-inner">
     <button class="close-x" id="closeSheet">✕</button>
-    <h3 id="sheetTitle" style="color:var(--ivory); font-family:'Fraunces'; margin:0 0 10px 0;">Puan / Ceza İşlemleri</h3>
+    <h3 id="sheetTitle" style="color:var(--ivory); font-family:'Fraunces'; margin:0 0 10px 0;">Puan / Ceza Yönetimi</h3>
 
     <div class="panel active">
-      <label>Yetkili Şifresi</label>
+      <label>Yetkili Şifresi (Gerekli)</label>
       <input type="password" id="admin-pass" placeholder="Uğur veya Can şifresi">
       
-      <label>Oyuncu</label>
+      <label>Seçili Oyuncu</label>
       <select id="a-player"></select>
       
-      <label>Puan Değişimi (+/-)</label>
-      <input type="number" id="a-points" placeholder="Örn: 20 veya -15">
+      <label>Puan Değişimi (+ veya - değer girin)</label>
+      <input type="number" id="a-points" placeholder="Örn: 20, 30 veya -15">
       
-      <label>Gerekçe / Açıklama</label>
-      <input type="text" id="a-reason" placeholder="Örn: Madde 2 - Yanlış Bitme">
+      <label>Kanun Maddesi / Ceza Gerekçesi</label>
+      <input type="text" id="a-reason" placeholder="Örn: Madde 1 - Okey Atarak Bitme">
       
-      <button class="btn btn-primary" id="saveAdjust">Değişikliği Kaydet</button>
+      <button class="btn btn-primary" id="saveAdjust">Puanı Buluta Gönder ve Kaydet</button>
       
       <!-- GEÇMİŞ CEZA / PUAN ALANI -->
-      <h4 style="color:var(--brass-bright); margin:20px 0 5px 0; font-size:13px; font-family:'JetBrains Mono'">📜 OYUNCU PUAN GEÇMİŞİ</h4>
+      <h4 style="color:var(--brass-bright); margin:20px 0 5px 0; font-size:13px; font-family:'JetBrains Mono'">📜 OYUNCUNUN TÜM GEÇMİŞİ</h4>
       <div class="history-section" id="playerHistory">
-        <div style="color:var(--ivory-dim); font-size:12px; text-align:center; padding:10px;">Henüz bu oyuncuya ait bir geçmiş bulunmuyor.</div>
+        <div style="color:var(--ivory-dim); font-size:12px; text-align:center; padding:10px;">Yükleniyor...</div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- PAYLAŞIM VE GÜNCELLEME PANELİ -->
-<div class="sheet" id="shareSheet">
+<!-- MANUEL YEDEKLEME PANELİ (BULUT ÇÖKERSE DİYE ÖNLEM) -->
+<div class="sheet" id="backupSheet">
   <div class="sheet-inner">
-    <button class="close-x" id="closeShareSheet">✕</button>
-    <h3 style="color:var(--ivory); font-family:'Fraunces'; margin: 0 0 10px 0;">Veri Paylaşımı ve Eşitleme</h3>
-    <p style="color:var(--ivory-dim); font-size:12px; line-height:1.4;">Yazılan puanları gruba göndermek için üstteki kodu kopyalayın. Gruptan gelen yeni puanları uygulamak için alttaki kutuya yapıştırın.</p>
+    <button class="close-x" id="closeBackupSheet">✕</button>
+    <h3 style="color:var(--ivory); font-family:'Fraunces'; margin: 0 0 10px 0;">Manuel Yedek Paneli</h3>
+    <p style="color:var(--ivory-dim); font-size:12px; line-height:1.4;">Bulut sistemi puanları otomatik eşitler. Ancak internet olmaması durumuna karşı manuel yedek kodunuz aşağıdadır.</p>
     
-    <label>Mevcut Veri Kodu (Gruba Atmak İçin)</label>
+    <label>Mevcut Ham Veri Kodu</label>
     <input type="text" id="exportData" readonly onclick="this.select();">
     
-    <label style="margin-top:15px;">Gruptan Gelen Kod (Yapıştırıp Güncellemek İçin)</label>
-    <input type="text" id="importData" placeholder="Buraya yapıştırın...">
+    <label style="margin-top:15px;">Manuel Kod Yapıştır</label>
+    <input type="text" id="importData" placeholder="Kod yapıştırarak zoraki güncelle...">
     
-    <button class="btn btn-primary" id="saveImport">Veriyi İçe Aktar ve Yenile</button>
+    <button class="btn btn-primary" id="saveImport">Kodu Zorla İçe Aktar</button>
   </div>
 </div>
 
 <script>
+// BULUT DEPOLAMA AYARI
+const APP_ID = "okey_kralligi_temmuz_2026"; // Grubunuza özel benzersiz ID
+const BIN_URL = `https://api.npoint.io/0ba03ba4cc30e9d6d376`; // Güvenli ortak ücretsiz bulut havuzu
+
 const ADMIN_PASSWORDS = ["ugur123", "can123"];
 const DEFAULT_PLAYERS = ["Bahattin Konut","Mehmet Can Zile","Ahmet Ziya Bitim","Deniz Kuyluk","Seçkin Yılmaz","Rüştü Korkmaz","Recep Koca","Gökhan Toprak","Veysi Temel","Hakan Göktaş","Murat Gül","Aytek Evren","Fatih Öztekin","Ahmet Erkam Ketmen","Uğur Ede"];
 let DATA = { players: [...DEFAULT_PLAYERS], adjustments: [] };
-const STORAGE_KEY = "okey_krallik_v3";
+const STORAGE_KEY = "okey_krallik_v4";
 
-// AKORDEON AÇILIŞ KAPANMA KONTROLÜ
+// Akordeon Kontrolü
 document.getElementById('toggleKanun').addEventListener('click', () => {
   const content = document.getElementById('kanunContent');
   const arrow = document.getElementById('kanunArrow');
@@ -207,13 +248,60 @@ document.getElementById('toggleKanun').addEventListener('click', () => {
   arrow.innerHTML = content.classList.contains('open') ? "▲" : "▼";
 });
 
-function loadData(){
+// BULUTTAN EN GÜNCEL VERİLERİ ÇEKME FONKSİYONU
+async function pullFromCloud(silent = false) {
+  const statusEl = document.getElementById('syncStatus');
+  if(!silent) statusEl.innerHTML = "⏳ Buluttan veriler çekiliyor...";
+  try {
+    const res = await fetch(BIN_URL);
+    if(res.ok) {
+      const cloudData = await res.json();
+      if(cloudData && cloudData[APP_ID]) {
+        DATA = cloudData[APP_ID];
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
+        renderBoard();
+        statusEl.innerHTML = "✅ Tablo Tamamen Güncel (Canlı)";
+        return true;
+      }
+    }
+  } catch(e) {
+    console.error("Bulut çekme hatası:", e);
+    statusEl.innerHTML = "⚠️ İnternet hatası! Lokal veriler gösteriliyor.";
+  }
+  // Bulut başarısız olursa lokale dön
   const local = localStorage.getItem(STORAGE_KEY);
   if(local) DATA = JSON.parse(local);
-}
-function saveData(){
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
   renderBoard();
+  return false;
+}
+
+// BULUTA YENİ VERİLERİ YAZMA FONKSİYONU
+async function pushToCloud() {
+  const statusEl = document.getElementById('syncStatus');
+  statusEl.innerHTML = "📤 Puanlar buluta yükleniyor...";
+  try {
+    // Önce mevcut tüm bulut havuzunu alalım ki diğer dataları bozmayalım
+    let fullBin = {};
+    try {
+      const getRes = await fetch(BIN_URL);
+      if(getRes.ok) fullBin = await getRes.json();
+    } catch(e){}
+    
+    fullBin[APP_ID] = DATA;
+
+    const res = await fetch(BIN_URL, {
+      method: 'POST', // npoint POST ile üzerine yazar
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(fullBin)
+    });
+    if(res.ok) {
+      statusEl.innerHTML = "✅ Tüm cihazlar eşitlendi!";
+      return true;
+    }
+  } catch(e) {
+    alert("Buluta bağlanırken hata oluştu. Puan telefonunuza kaydedildi ancak diğer cihazlara gitmedi. İnterneti kontrol edin.");
+  }
+  return false;
 }
 
 function computeTotals(){
@@ -242,16 +330,15 @@ function renderBoard(){
 
     let badgeIcon = "";
     if (i === 0) badgeIcon = " 👑";
-    if (i >= rows.length - 4) badgeIcon = " 🥞";
+    if (i >= rows.length - 4) badgeIcon = " %F0%9F%A5%9E"; 
     if (r.name === "Ahmet Erkam Ketmen") badgeIcon += " 🥜"; 
 
     div.innerHTML = `
       <div class="rank-badge">${i+1}</div>
-      <div class="tile-name"><div class="n">${r.name}${badgeIcon}</div></div>
+      <div class="tile-name"><div class="n">${r.name}${decodeURIComponent(badgeIcon)}</div></div>
       <div class="tile-points">${r.total}</div>
     `;
 
-    // Oyuncuya tıklanınca doğrudan onun paneli ve geçmişi açılsın
     div.addEventListener('click', () => {
       fillSelect();
       document.getElementById('a-player').value = r.name;
@@ -266,18 +353,16 @@ function renderBoard(){
   document.getElementById('exportData').value = btoa(unescape(encodeURIComponent(JSON.stringify(DATA))));
 }
 
-// OYUNCUNUN GEÇMİŞ CEZA VE PUANLARINI GÖSTERME
 function showPlayerHistory(playerName) {
   const historyContainer = document.getElementById('playerHistory');
   const filtered = DATA.adjustments.filter(a => a.player === playerName);
   
   if(filtered.length === 0) {
-    historyContainer.innerHTML = `<div style="color:var(--ivory-dim); font-size:12px; text-align:center; padding:10px;">Henüz bu oyuncuya ait bir puan/ceza geçmişi yok.</div>`;
+    historyContainer.innerHTML = `<div style="color:var(--ivory-dim); font-size:12px; text-align:center; padding:10px;">Henüz puan/ceza geçmişi yok.</div>`;
     return;
   }
   
-  // Ters kronolojik sıra (en yeni en üstte)
-  historyContainer.innerHTML = filtered.reverse().map(a => {
+  historyContainer.innerHTML = [...filtered].reverse().map(a => {
     const isPos = Number(a.points) >= 0;
     return `
       <div class="history-item">
@@ -290,7 +375,7 @@ function showPlayerHistory(playerName) {
 
 const overlay = document.getElementById('overlay');
 const sheet = document.getElementById('sheet');
-const shareSheet = document.getElementById('shareSheet');
+const backupSheet = document.getElementById('backupSheet');
 
 function openSheet(targetId){
   overlay.classList.add('show');
@@ -299,7 +384,7 @@ function openSheet(targetId){
 function closeAllSheets(){
   overlay.classList.remove('show');
   sheet.classList.remove('show');
-  shareSheet.classList.remove('show');
+  backupSheet.classList.remove('show');
 }
 
 document.getElementById('openFab').addEventListener('click', () => {
@@ -307,68 +392,88 @@ document.getElementById('openFab').addEventListener('click', () => {
   if(DATA.players.length > 0) showPlayerHistory(document.getElementById('a-player').value);
   openSheet('sheet');
 });
-document.getElementById('openShare').addEventListener('click', () => openSheet('shareSheet'));
-document.getElementById('quickUpdateBtn').addEventListener('click', () => openSheet('shareSheet'));
+document.getElementById('openBackup').addEventListener('click', () => openSheet('backupSheet'));
+
+// CANLI BÜYÜK GÜNCELLEME BUTONU AKSİYONU
+document.getElementById('quickUpdateBtn').addEventListener('click', async () => {
+  const success = await pullFromCloud();
+  if(success) {
+    alert("🎉 Tablo başarıyla en güncel bulut verileriyle senkronize edildi!");
+  }
+});
+
 document.getElementById('closeSheet').addEventListener('click', closeAllSheets);
-document.getElementById('closeShareSheet').addEventListener('click', closeAllSheets);
+document.getElementById('closeBackupSheet').addEventListener('click', closeAllSheets);
 overlay.addEventListener('click', closeAllSheets);
 
 function fillSelect(){
   const select = document.getElementById('a-player');
-  // Sadece içi boşsa doldur ki tıklanan oyuncu değişmesin
   if(!select.innerHTML) {
     select.innerHTML = DATA.players.map(p => `<option value="${p}">${p}</option>`).join('');
     select.addEventListener('change', (e) => showPlayerHistory(e.target.value));
   }
 }
 
-// PUAN / CEZA KAYDETME
-document.getElementById('saveAdjust').addEventListener('click', () => {
+// PUAN YAZMA VE BULUTA GÖNDERME
+document.getElementById('saveAdjust').addEventListener('click', async () => {
   const enteredPass = document.getElementById('admin-pass').value;
   const player = document.getElementById('a-player').value;
   const points = document.getElementById('a-points').value;
   const reason = document.getElementById('a-reason').value || "Manuel Düzenleme";
 
   if(!ADMIN_PASSWORDS.includes(enteredPass)) {
-    alert("❌ Hatalı Yetkili Şifresi! Yetkiniz yok.");
+    alert("❌ Hatalı Yetkili Şifresi!");
     return;
   }
   if(!points) {
-    alert("Lütfen geçerli bir puan değeri girin!");
+    alert("Lütfen geçerli bir puan girin!");
     return;
   }
 
+  // Değişikliği lokale kaydet
   DATA.adjustments.push({ player, points: Number(points), reason });
-  saveData();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
+  renderBoard();
+  
+  // Buluta gönder
+  await pushToCloud();
+  
   closeAllSheets();
   document.getElementById('admin-pass').value = "";
   document.getElementById('a-points').value = "";
   document.getElementById('a-reason').value = "";
-  alert(`✅ ${player} için puan güncellemesi başarıyla işlendi!`);
+  alert(`✅ ${player} için puan kaydedildi ve tüm masayla eşitlendi!`);
 });
 
-// VERİ İÇE AKTARMA
-document.getElementById('saveImport').addEventListener('click', () => {
+// YEDEK KOD İÇE AKTARMA
+document.getElementById('saveImport').addEventListener('click', async () => {
   const importValue = document.getElementById('importData').value.trim();
-  if(!importValue) return alert("Lütfen gruptan gelen kodu kutuya yapıştırın.");
+  if(!importValue) return alert("Lütfen yedek kodu yapıştırın.");
   try {
     const decoded = JSON.parse(decodeURIComponent(escape(atob(importValue))));
     if(decoded.players && decoded.adjustments) {
       DATA = decoded;
-      saveData();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
+      renderBoard();
+      await pushToCloud();
       closeAllSheets();
       document.getElementById('importData').value = "";
-      alert("🎉 Tablo ve ceza geçmişi başarıyla eşitlendi!");
-    } else {
-      alert("Hatalı veri yapısı.");
+      alert("🎉 Tablo manuel kodla senkronize edildi!");
     }
   } catch(e) {
-    alert("Geçersiz veri kodu!");
+    alert("Geçersiz kod.");
   }
 });
 
-loadData();
-renderBoard();
+// İlk Açılışta Otomatik Canlı Veriyi Çek
+(async () => {
+  const local = localStorage.getItem(STORAGE_KEY);
+  if(local) {
+    DATA = JSON.parse(local);
+    renderBoard();
+  }
+  await pullFromCloud(true);
+})();
 </script>
 </body>
 </html>
