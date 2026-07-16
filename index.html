@@ -881,21 +881,50 @@ function renderPlayersList() {
 
 // OYUN KAYIT İŞLEMİ
 document.getElementById('saveManual').addEventListener('click', async () => {
-  const pass = document.getElementById('m-pass').value;
-  if(!ADMIN_PASSWORDS.includes(pass)) return alert("Yetkisiz Giriş!");
-  
-  const results = [];
-  const selects = document.querySelectorAll('.p-select');
-  const pts = pointsTable(currentDay, currentSize);
-  
-  selects.forEach((sel, i) => {
-    results.push({ player: sel.value, points: pts[i] });
-  });
+  try {
+    const pass = document.getElementById('m-pass').value;
+    const statusEl = document.getElementById('manualStatus');
+    
+    // 1. Şifre Kontrolü
+    if(!ADMIN_PASSWORDS.includes(pass)) {
+      statusEl.textContent = "❌ Hatalı şifre!";
+      return;
+    }
+    
+    // 2. Veri Hazırlama
+    const results = [];
+    const selects = document.querySelectorAll('.p-select');
+    const pts = pointsTable(currentDay, currentSize);
+    
+    selects.forEach((sel, i) => {
+      results.push({ player: sel.value, points: pts[i] });
+    });
 
-  DATA.entries.push({ date: document.getElementById('m-date').value, dayType: currentDay, tableSize: currentSize, results });
-  await pushToCloud();
-  renderBoard();
-  closeSheetFn();
+    const newEntry = { 
+      date: document.getElementById('m-date').value, 
+      dayType: currentDay, 
+      tableSize: currentSize, 
+      results 
+    };
+
+    // 3. Veriyi Lokal'e Ekle ve Buluta Gönder
+    statusEl.textContent = "⏳ İşleniyor...";
+    DATA.entries.push(newEntry);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
+    
+    const success = await pushToCloud();
+    
+    if(success) {
+      statusEl.textContent = "✅ Kaydedildi!";
+      renderBoard();
+      closeSheetFn();
+    } else {
+      statusEl.textContent = "⚠️ Buluta yüklenemedi! Lokal kaydedildi.";
+    }
+  } catch(err) {
+    console.error("Kayıt hatası:", err);
+    alert("Bir hata oluştu: " + err.message);
+  }
 });
 
 // ARAYÜZ ETKİLEŞİM
