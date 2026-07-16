@@ -38,7 +38,7 @@
     font-family:'Public Sans', sans-serif;
     min-height:100vh;
     -webkit-font-smoothing:antialiased;
-    padding-bottom:170px; /* FAB grubu sığsın diye alt boşluk artırıldı */
+    padding-bottom:110px;
   }
   .wrap{max-width:520px;margin:0 auto;padding:0 16px;}
 
@@ -196,30 +196,22 @@
   .tile-points.neg{color:var(--wine-bright);}
   .tile-points.zero{color:var(--ink-soft);}
 
-  /* ---------- FAB GROUP ---------- */
-  .fab-group{
-    position:fixed; right:20px; bottom:24px;
-    display:flex; flex-direction:column; gap:10px;
-    z-index:40;
-  }
+  /* ---------- FAB ---------- */
   .fab{
+    position:fixed; right:20px; bottom:24px;
     background:var(--wine-bright);
     color:var(--ivory);
     border:none;
     border-radius:999px;
-    padding:13px 20px;
+    padding:15px 22px;
     font-family:'Public Sans',sans-serif;
-    font-weight:700; font-size:13.5px;
+    font-weight:700; font-size:14.5px;
     box-shadow: var(--shadow);
     display:flex; align-items:center; gap:8px;
     cursor:pointer;
-    transition: transform 0.1s ease;
+    z-index:40;
   }
-  .fab.fab-photo{
-    background:var(--brass);
-    color:var(--felt-deep);
-  }
-  .fab:active{transform:scale(0.96);}
+  .fab:active{transform:scale(0.97);}
 
   /* ---------- MODAL / SHEET ---------- */
   .overlay{
@@ -386,7 +378,6 @@
 </noscript>
 
 <div class="wrap">
-  <div class="env-warning" id="envWarning" style="display:none;"></div>
   <div class="ferman">
     <svg class="crown" viewBox="0 0 48 48" fill="none">
       <path d="M6 34 L4 16 L14 24 L24 10 L34 24 L44 16 L42 34 Z" fill="#c69749" stroke="#7a2e2e" stroke-width="1.5" stroke-linejoin="round"/>
@@ -418,10 +409,7 @@
   <div id="board"></div>
 </div>
 
-<div class="fab-group">
-  <button class="fab fab-photo" id="openPhotoFab">📸 Fotoğraftan Puan Ekle</button>
-  <button class="fab" id="openFab">✛ El / Puan Ekle</button>
-</div>
+<button class="fab" id="openFab">✛ El / Puan Ekle</button>
 
 <div class="overlay" id="overlay"></div>
 <div class="sheet" id="sheet">
@@ -539,16 +527,12 @@
 </div>
 
 <script>
-// ---------- GÜVENLİK VE GÜNCELLEME YAPILANDIRMASI ----------
-const ADMIN_PASSWORD = "kral"; // Bu şifreyi dilediğiniz gibi değiştirebilirsiniz!
-
 const DEFAULT_PLAYERS = [
   "Bahattin Konut","Mehmet Can Zile","Ahmet Ziya Bitim","Deniz Kuyluk","Seçkin Yılmaz",
   "Rüştü Korkmaz","Recep Koca","Gökhan Toprak","Veysi Temel","Hakan Göktaş",
   "Murat Gül","Aytek Evren","Fatih Öztekin","Ahmet Erkam Ketmen","Uğur Ede"
 ];
 const STORAGE_KEY = "krallik-temmuz-data";
-const SHARED = true;
 
 let DATA = null; // {players:[], entries:[], adjustments:[]}
 let manualSlots = []; // current slot player selections
@@ -556,75 +540,31 @@ let photoDraftData = null;
 
 function players(){ return DATA.players; }
 
-// Şifre Doğrulama Fonksiyonu
-function checkAdminPermission() {
-  const input = prompt("Yönetici Yetkisi: Lütfen şifrenizi girin:");
-  if (input === null) return false; // İptal edildi
-  if (input === ADMIN_PASSWORD) {
-    return true;
-  }
-  alert("Hatalı şifre! İşlem reddedildi.");
-  return false;
-}
-
-// ---------- STORAGE (Anlık ve Kararlı Yedekli Güncelleme) ----------
+// ---------- STORAGE (TARAYICI LOCAL STORAGE UYUMLU) ----------
 async function loadData(){
-  try{
-    const res = await window.storage.get(STORAGE_KEY, SHARED);
-    if(res && res.value){
-      const parsed = JSON.parse(res.value);
+  try {
+    const localRes = localStorage.getItem(STORAGE_KEY);
+    if (localRes) {
+      const parsed = JSON.parse(localRes);
       if(!parsed.players || !parsed.players.length) parsed.players = [...DEFAULT_PLAYERS];
       if(!parsed.entries) parsed.entries = [];
       if(!parsed.adjustments) parsed.adjustments = [];
       return parsed;
     }
-  }catch(e){ /* key doesn't exist yet */ }
+  } catch(e) { 
+    console.error("Local storage yüklenemedi, varsayılanlar yükleniyor.", e); 
+  }
   return { players: [...DEFAULT_PLAYERS], entries: [], adjustments: [] };
 }
 
-// Hızlı ve İyimser (Optimistic) kayıt yöneticisi
-async function optimisticSave(newData, onBeforeSave, onFailure) {
-  // 1. Yeni veriyi hemen yerel duruma al
-  DATA = newData;
-  // 2. Arayüzü hiç beklemeden anında yenile
-  refreshPlayerDependentUI();
-  
-  if (onBeforeSave) onBeforeSave();
-
-  // 3. Arka planda sunucu senkronizasyonunu yap
-  try {
-    if(!window.storage || typeof window.storage.set !== 'function'){
-      throw new Error('Bulut depolama sistemi bulunamadı.');
-    }
-    const res = await window.storage.set(STORAGE_KEY, JSON.stringify(newData), SHARED);
-    if(!res) throw new Error('Sunucu kaydı başarısız oldu.');
-    return { ok: true };
-  } catch(e) {
-    console.error("Storage set error, reverting...", e);
-    // 4. Hata durumunda eski kararlı veriyi yükle ve geri al
-    DATA = await loadData();
-    refreshPlayerDependentUI();
-    if (onFailure) onFailure(e.message || String(e));
-    return { ok: false, error: e.message };
-  }
-}
-
 async function saveData(data){
-  try{
-    if(!window.storage || typeof window.storage.set !== 'function'){
-      throw new Error('Depolama sistemi bulunamadı.');
-    }
-    const res = await window.storage.set(STORAGE_KEY, JSON.stringify(data), SHARED);
-    if(!res) throw new Error('Sunucudan boş yanıt geldi.');
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     return {ok:true};
-  }catch(e){
-    console.error("storage set error", e);
+  } catch(e) {
+    console.error("Local storage kaydetme hatası", e);
     return {ok:false, error: (e && e.message) ? e.message : String(e)};
   }
-}
-
-function storageAvailable(){
-  return typeof window.storage !== 'undefined' && window.storage && typeof window.storage.get === 'function';
 }
 
 // ---------- SCORING ----------
@@ -699,8 +639,6 @@ function closeSheetFn(){
   sheet.classList.remove('show');
 }
 document.getElementById('openFab').addEventListener('click', ()=>openSheet('manual'));
-// Hızlı Fotoğraf Analiz FAB Event'i
-document.getElementById('openPhotoFab').addEventListener('click', ()=>openSheet('photo'));
 document.getElementById('openRulesBanner').addEventListener('click', ()=>openSheet('rules'));
 document.getElementById('closeSheet').addEventListener('click', closeSheetFn);
 overlay.addEventListener('click', closeSheetFn);
@@ -790,7 +728,6 @@ document.getElementById('saveManual').addEventListener('click', async ()=>{
     statusEl.innerHTML = `<div class="status-msg error">Aynı oyuncu birden fazla seçilemez.</div>`;
     return;
   }
-  
   const results = names.map((n,i)=>({player:n, points: table[i]}));
   const entry = {
     id: 'e_'+Date.now(),
@@ -801,24 +738,18 @@ document.getElementById('saveManual').addEventListener('click', async ()=>{
     source: 'manual',
     createdAt: Date.now()
   };
-
-  // İyimser Güncelleme Tetiklemesi
-  const clonedData = JSON.parse(JSON.stringify(DATA));
-  clonedData.entries.push(entry);
-
   statusEl.innerHTML = `<div class="status-msg info"><span class="spinner"></span>Kaydediliyor…</div>`;
-  
-  await optimisticSave(
-    clonedData,
-    () => {
-      statusEl.innerHTML = `<div class="status-msg ok">Kaydedildi. Liderlik tablosu anında güncellendi.</div>`;
-      manualSlots.forEach(s=>s.value="");
-      updatePreview();
-    },
-    (err) => {
-      statusEl.innerHTML = `<div class="status-msg error">Kaydedilemedi (Geri alındı): ${err}</div>`;
-    }
-  );
+  DATA.entries.push(entry);
+  const result = await saveData(DATA);
+  if(result.ok){
+    statusEl.innerHTML = `<div class="status-msg ok">Kaydedildi. Liderlik tablosu güncellendi.</div>`;
+    renderBoard();
+    manualSlots.forEach(s=>s.value="");
+    updatePreview();
+  } else {
+    DATA.entries.pop();
+    statusEl.innerHTML = `<div class="status-msg error">Kaydedilemedi: ${result.error}</div>`;
+  }
 });
 
 // ---------- ADJUSTMENT ----------
@@ -829,7 +760,7 @@ function fillPlayerSelect(id){
   if(players().includes(prev)) sel.value = prev;
 }
 
-// ---------- PLAYERS MANAGEMENT (ŞİFRE KORUMALI) ----------
+// ---------- PLAYERS MANAGEMENT ----------
 function refreshPlayerDependentUI(){
   fillPlayerSelect('a-player');
   fillPlayerSelect('h-player');
@@ -852,32 +783,23 @@ function renderPlayersList(){
       <button data-remove="${p}">Çıkar</button>
     </div>`;
   }).join('');
-  
-  // Şifre Korumalı Oyuncu Çıkarma
   wrap.querySelectorAll('button[data-remove]').forEach(btn=>{
     btn.addEventListener('click', async ()=>{
       const name = btn.dataset.remove;
-      
-      if(!confirm(`${name} listeden çıkarılsın mı? Geçmiş puanları silinmez.`)) return;
-      if(!checkAdminPermission()) return; // Şifre Kontrolü
-
-      const clonedData = JSON.parse(JSON.stringify(DATA));
-      clonedData.players = clonedData.players.filter(p=>p!==name);
-
-      await optimisticSave(
-        clonedData,
-        () => {
-          renderPlayersList();
-        },
-        (err) => {
-          alert('Çıkarılamadı: ' + err);
-        }
-      );
+      if(!confirm(`${name} listeden çıkarılsın mı? Geçmiş puanları silinmez, tekrar eklenirse geri görünür.`)) return;
+      DATA.players = DATA.players.filter(p=>p!==name);
+      const result = await saveData(DATA);
+      if(result.ok){
+        refreshPlayerDependentUI();
+        renderPlayersList();
+      } else {
+        DATA.players.push(name);
+        alert('Çıkarılamadı: ' + result.error);
+      }
     });
   });
 }
 
-// Şifre Korumalı Oyuncu Ekleme
 document.getElementById('addPlayerBtn').addEventListener('click', async ()=>{
   const input = document.getElementById('newPlayerName');
   const statusEl = document.getElementById('addPlayerStatus');
@@ -891,27 +813,19 @@ document.getElementById('addPlayerBtn').addEventListener('click', async ()=>{
     statusEl.innerHTML = `<div class="status-msg error">Bu isim zaten listede.</div>`;
     return;
   }
-
-  if(!checkAdminPermission()) return; // Şifre Kontrolü
-
   statusEl.innerHTML = `<div class="status-msg info"><span class="spinner"></span>Ekleniyor…</div>`;
-  
-  const clonedData = JSON.parse(JSON.stringify(DATA));
-  clonedData.players.push(name);
-
-  await optimisticSave(
-    clonedData,
-    () => {
-      statusEl.innerHTML = `<div class="status-msg ok">${name} listeye eklendi.</div>`;
-      input.value = '';
-      renderPlayersList();
-    },
-    (err) => {
-      statusEl.innerHTML = `<div class="status-msg error">Eklenemedi: ${err}</div>`;
-    }
-  );
+  DATA.players.push(name);
+  const result = await saveData(DATA);
+  if(result.ok){
+    statusEl.innerHTML = `<div class="status-msg ok">${name} listeye eklendi.</div>`;
+    input.value = '';
+    refreshPlayerDependentUI();
+    renderPlayersList();
+  } else {
+    DATA.players.pop();
+    statusEl.innerHTML = `<div class="status-msg error">Eklenemedi: ${result.error}</div>`;
+  }
 });
-
 document.getElementById('newPlayerName').addEventListener('keydown', (e)=>{
   if(e.key === 'Enter') document.getElementById('addPlayerBtn').click();
 });
@@ -931,23 +845,18 @@ document.getElementById('saveAdjust').addEventListener('click', async ()=>{
     reason: document.getElementById('a-reason').value || '—',
     createdAt: Date.now()
   };
-
-  const clonedData = JSON.parse(JSON.stringify(DATA));
-  clonedData.adjustments.push(adj);
-
   statusEl.innerHTML = `<div class="status-msg info"><span class="spinner"></span>Kaydediliyor…</div>`;
-  
-  await optimisticSave(
-    clonedData,
-    () => {
-      statusEl.innerHTML = `<div class="status-msg ok">Puan eklendi.</div>`;
-      document.getElementById('a-points').value='';
-      document.getElementById('a-reason').value='';
-    },
-    (err) => {
-      statusEl.innerHTML = `<div class="status-msg error">Kaydedilemedi: ${err}</div>`;
-    }
-  );
+  DATA.adjustments.push(adj);
+  const result = await saveData(DATA);
+  if(result.ok){
+    statusEl.innerHTML = `<div class="status-msg ok">Puan eklendi.</div>`;
+    renderBoard();
+    document.getElementById('a-points').value='';
+    document.getElementById('a-reason').value='';
+  } else {
+    DATA.adjustments.pop();
+    statusEl.innerHTML = `<div class="status-msg error">Kaydedilemedi: ${result.error}</div>`;
+  }
 });
 
 // ---------- HISTORY ----------
@@ -977,19 +886,11 @@ function renderHistory(){
 
 document.getElementById('resetAll').addEventListener('click', async ()=>{
   if(!confirm('Tüm ay boyunca girilen puanlar silinecek (oyuncu listesi kalacak). Emin misin?')) return;
-  if(!checkAdminPermission()) return; // Şifre Kontrolü
-
-  const clonedData = { players: DATA.players, entries:[], adjustments:[] };
-  
-  await optimisticSave(
-    clonedData,
-    () => {
-      renderHistory();
-    },
-    (err) => {
-      alert('Sıfırlanamadı: ' + err);
-    }
-  );
+  DATA = { players: DATA.players, entries:[], adjustments:[] };
+  const result = await saveData(DATA);
+  if(!result.ok){ alert('Sıfırlanamadı: ' + result.error); }
+  renderBoard();
+  renderHistory();
 });
 
 // ---------- PHOTO / VISION ----------
@@ -1180,20 +1081,17 @@ function renderPhotoDraft(parsed){
       }
 
       saveStatus.innerHTML = `<div class="status-msg info"><span class="spinner"></span>Kaydediliyor…</div>`;
-      
-      const clonedData = JSON.parse(JSON.stringify(DATA));
-      clonedData.entries.push(...newEntries);
-      clonedData.adjustments.push(...newAdjustments);
-
-      await optimisticSave(
-        clonedData,
-        () => {
-          saveStatus.innerHTML = `<div class="status-msg ok">Kaydedildi. Liderlik tablosu anında güncellendi.</div>`;
-        },
-        (err) => {
-          saveStatus.innerHTML = `<div class="status-msg error">Kaydedilemedi: ${err}</div>`;
-        }
-      );
+      DATA.entries.push(...newEntries);
+      DATA.adjustments.push(...newAdjustments);
+      const result = await saveData(DATA);
+      if(result.ok){
+        saveStatus.innerHTML = `<div class="status-msg ok">Kaydedildi. Liderlik tablosu güncellendi.</div>`;
+        renderBoard();
+      } else {
+        newEntries.forEach(()=>DATA.entries.pop());
+        newAdjustments.forEach(()=>DATA.adjustments.pop());
+        saveStatus.innerHTML = `<div class="status-msg error">Kaydedilemedi: ${result.error}</div>`;
+      }
     });
   }
 }
@@ -1223,11 +1121,11 @@ const RULES = [
   "Tatlı Saray'dan ya da Yalçın Pastanesi'nden son 4 kişi, kişi başı 1 kg olacak şekilde tatlı alacaktır. İstek halinde anket açılarak tatlı; lüks karışık çerez (badem, kaju, antep fıstığı, fındık) olarak değiştirilebilir. Çerez: okur veya omuştan, 1 kilo baklava fiyatı kadar alınacaktır.",
   "Temmuz Ayının Raportörü Uğur EDE olacaktır. Kral sözcüsü olarak Rüştü KORKMAZ göreve devam edecektir. Kanunları okumak her oyuncunun görevidir.",
   "Bir sonraki ay için raportör, sonuncu olacaktır.",
-  "Oyune gelenler gelme zamanına göre zar atarak oturma düzeni oluşturacaktır. Büyükten küçüğe doğru sıralı şekilde oturulacaktır.",
+  "Oyuna gelenler gelme zamanına göre zar atarak oturma düzeni oluşturacaktır. Büyükten küçüğe doğru sıralı şekilde oturulacaktır.",
   "Masada oturanlar haricindekiler takoza ve taşa dokunamazlar, taş çekemezler. Bunların olması durumunda takoza dokunan veya taş çekene -6 puan ceza yazılır.",
   "Takozu yanlışlıkla devirme durumunda; takoz devirenin açarı ölür, -6 puan alır, okey dönüyor muamelesi görür, diğer oyuncular oyuna devam eder.",
   "Yanlış açma durumlarında, yanlış açana -10 puan yazılır. O oyun bitmiş olarak değerlendirilir. Diğer oyunculara +2'şer puan verilir.",
-  "Oyun açıldığı anda herkes takozundaki taşı saymakla yükümlür. İlk dağıtımda yanlışlık varsa ceza olmadan tekrar el dağıtılır. Takozunda eksik ya da fazla taş olduğu tespit edilenlerin açarı ölür. Okey dönüyor muamelesi görür.",
+  "Oyun açıldığı anda herkes takozundaki taşı saymakla yükümlüdür. İlk dağıtımda yanlışlık varsa ceza olmadan tekrar el dağıtılır. Takozunda eksik ya da fazla taş olduğu tespit edilenlerin açarı ölür. Okey dönüyor muamelesi görür.",
   "Komite vb. oluşumlar tespit edildiği takdirde, oluşum içerisinde olanlar ve oluşuma destek verenler Kral tarafından -10 puanla cezalandırılacaktır."
 ];
 
@@ -1244,13 +1142,6 @@ document.getElementById('ruleSearch').addEventListener('input', (e)=> renderRule
 
 // ---------- INIT ----------
 (async function init(){
-  const warnEl = document.getElementById('envWarning');
-  if(!storageAvailable()){
-    warnEl.style.display = 'block';
-    warnEl.innerHTML = `⚠️ <b>Kalıcı kayıt çalışmıyor.</b> Bu sayfa şu an bağımsız bir dosya/tarayıcı sekmesi olarak açılmış görünüyor;
-    puan kaydetme ve fotoğraftan okuma özellikleri yalnızca bu site <b>Claude içinde bir artifact olarak</b> açıldığında çalışır.
-    Değişiklikler bu oturumda görünür ama kaydedilmez. Claude sohbetindeki dosya/önizleme bağlantısından açmayı dene.`;
-  }
   DATA = await loadData();
   fillPlayerSelect('a-player');
   fillPlayerSelect('h-player');
