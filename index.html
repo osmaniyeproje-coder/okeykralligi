@@ -836,3 +836,98 @@ document.getElementById('h-player').addEventListener('change', renderHistory);
 </script>
 </body>
 </html>
+// --- DEVAMI (Bu kısmı mevcut <script> bloğunun en altına ekleyin) ---
+
+function updateSlots() {
+  const wrap = document.getElementById('slotsWrap');
+  const pts = pointsTable(currentDay, currentSize);
+  wrap.innerHTML = "";
+  
+  for(let i=0; i<currentSize; i++) {
+    const slot = document.createElement('div');
+    slot.className = 'slot';
+    slot.innerHTML = `
+      <div class="badge">${i+1}</div>
+      <select class="p-select">
+        ${DATA.players.map(p => `<option value="${p}">${p}</option>`).join('')}
+      </select>
+    `;
+    wrap.appendChild(slot);
+  }
+  document.getElementById('pointsPreview').innerHTML = `Bu el sonunda: <b>${pts.join(', ')}</b> puanları dağıtılacak.`;
+}
+
+// Oyuncu listesini ve seçimleri doldur
+function refreshPlayerDependentUI() {
+  const selects = ['a-player', 'h-player'];
+  selects.forEach(id => {
+    const sel = document.getElementById(id);
+    sel.innerHTML = '<option value="">Seçiniz...</option>' + DATA.players.map(p => `<option value="${p}">${p}</option>`).join('');
+  });
+  renderPlayersList();
+  updateSlots();
+}
+
+function renderPlayersList() {
+  const list = document.getElementById('playersList');
+  document.getElementById('playerCount').textContent = DATA.players.length;
+  list.innerHTML = DATA.players.map(p => `
+    <div class="player-row">
+      <div class="pn">${p}</div>
+      <button onclick="removePlayer('${p}')">Çıkar</button>
+    </div>
+  `).join('');
+}
+
+// OYUN KAYIT İŞLEMİ
+document.getElementById('saveManual').addEventListener('click', async () => {
+  const pass = document.getElementById('m-pass').value;
+  if(!ADMIN_PASSWORDS.includes(pass)) return alert("Yetkisiz Giriş!");
+  
+  const results = [];
+  const selects = document.querySelectorAll('.p-select');
+  const pts = pointsTable(currentDay, currentSize);
+  
+  selects.forEach((sel, i) => {
+    results.push({ player: sel.value, points: pts[i] });
+  });
+
+  DATA.entries.push({ date: document.getElementById('m-date').value, dayType: currentDay, tableSize: currentSize, results });
+  await pushToCloud();
+  renderBoard();
+  closeSheetFn();
+});
+
+// ARAYÜZ ETKİLEŞİM
+document.querySelectorAll('.day-btn').forEach(b => b.addEventListener('click', (e) => {
+  document.querySelectorAll('.day-btn').forEach(btn => btn.classList.remove('active'));
+  e.target.classList.add('active');
+  currentDay = e.target.dataset.day;
+  updateSlots();
+}));
+
+document.querySelectorAll('.size-btn').forEach(b => b.addEventListener('click', (e) => {
+  document.querySelectorAll('.size-btn').forEach(btn => btn.classList.remove('active'));
+  e.target.classList.add('active');
+  currentSize = parseInt(e.target.dataset.size);
+  updateSlots();
+}));
+
+// Kanunları Listele
+function renderRules(query) {
+  const list = document.getElementById('rulesList');
+  const filtered = RULES.filter(r => r.toLowerCase().includes(query.toLowerCase()));
+  list.innerHTML = filtered.map((r, i) => `
+    <div class="rule-item">
+      <div class="rule-num">${i+1}</div>
+      <div class="rule-text">${r}</div>
+    </div>
+  `).join('');
+}
+
+// Başlangıç Çalıştırma
+window.onload = async () => {
+  document.getElementById('m-date').valueAsDate = new Date();
+  await pullFromCloud(true);
+  renderRules("");
+};
