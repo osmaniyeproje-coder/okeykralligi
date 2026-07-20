@@ -92,8 +92,6 @@ Bu uygulama Temmuz Krallığı puanlarını otomatik hesaplamak için hazırlanm
 
 </div>
 
-<div class="quickButtons">
-
 <button id="newGameBtn">
 
 🎮 Yeni Oyun Başlat
@@ -213,7 +211,52 @@ Henüz oyun oynanmadı.
 </div>
 
 </section>
+<section id="admin" class="page">
 
+<h2>🔐 Yönetici Girişi</h2>
+
+<div class="card">
+
+<input
+type="password"
+id="adminPassword"
+placeholder="Şifre">
+
+<button
+class="primaryButton"
+id="loginBtn">
+
+Giriş Yap
+
+</button>
+
+</div>
+
+<div
+id="adminPanel"
+style="display:none;">
+
+<h3>Yönetici Paneli</h3>
+
+<button
+class="primaryButton"
+id="addGameBtn">
+
+➕ Oyun Sonucu Gir
+
+</button>
+
+<button
+class="primaryButton"
+id="logoutBtn">
+
+🚪 Çıkış
+
+</button>
+
+</div>
+
+</section>
 <section id="rules" class="page">
 
 <h2>
@@ -252,9 +295,9 @@ Word dosyasındaki tüm maddeler burada gösterilecek.
 
 </button>
 
-<button class="bottomBtn" data-page="game">
+<button class="bottomBtn" data-page="admin">
 
-🎮
+🔐
 
 </button>
 
