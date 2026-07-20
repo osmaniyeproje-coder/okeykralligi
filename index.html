@@ -263,7 +263,7 @@
 
 <script>
 // JSONBin.io Bilgileri
-const BIN_ID = "66a3ef18ad19ca34f8910b85"; // Mevcut Bin IDniz (varsayılan veya güncel bin id)
+const BIN_ID = "66a3ef18ad19ca34f8910b85"; 
 const MASTER_KEY = "$2a$10$gwAz3iL7ucp6uKXjXnmk6e/iQGuvLgyhcfT66MunbCC1CE54LqmqS";
 const ACCESS_KEY = "$2a$10$V3v5rzz/JCz9AWcquzhIJe3qa6FIgjoQMAR5KCoYYhFK9NuihCZlW";
 const BIN_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
@@ -273,7 +273,7 @@ const ADMIN_PASSWORDS = ["ugur123", "can123"];
 const DEFAULT_PLAYERS = ["Bahattin Konut","Mehmet Can Zile","Ahmet Ziya Bitim","Deniz Kuyluk","Seçkin Yılmaz","Rüştü Korkmaz","Recep Koca","Gökhan Toprak","Veysi Temel","Hakan Göktaş","Murat Gül","Aytek Evren","Fatih Öztekin","Ahmet Erkam Ketmen","Uğur Ede"];
 
 let DATA = { players: [...DEFAULT_PLAYERS], adjustments: [], entries: [] };
-const STORAGE_KEY = "okey_krallik_v6";
+const STORAGE_KEY = "okey_krallik_v7";
 
 // Akordeon Kontrolü
 document.getElementById('toggleKanun').addEventListener('click', () => {
@@ -322,12 +322,13 @@ function updateSlots() {
 document.getElementById('m-size').addEventListener('change', updateSlots);
 document.getElementById('m-day').addEventListener('change', updateSlots);
 
-// JSONBIN.IO: VERİ ÇEKME (GET)
+// JSONBIN.IO: Önbelleği (Cache) Delen Dinamik Zaman Damgalı GET İsteği
 async function pullFromCloud(silent = false) {
   const statusEl = document.getElementById('syncStatus');
-  if(!silent) statusEl.innerHTML = "⏳ JSONBin'den güncel veriler çekiliyor...";
+  if(!silent) statusEl.innerHTML = "⏳ JSONBin'den en taze veriler çekiliyor...";
   try {
-    const res = await fetch(BIN_URL + "/latest", {
+    // Tarayıcı veya CDN önbelleğini bypass etmek için rastgele _t ekleniyor
+    const res = await fetch(`${BIN_URL}/latest?_t=${Date.now()}`, {
       headers: {
         'X-Master-Key': MASTER_KEY,
         'X-Access-Key': ACCESS_KEY
@@ -335,7 +336,6 @@ async function pullFromCloud(silent = false) {
     });
     if(res.ok) {
       const responseData = await res.json();
-      // JSONBin v3 yapısında veri .record içinde döner
       const cloudData = responseData.record || responseData;
       if(cloudData && cloudData[APP_ID]) {
         DATA = cloudData[APP_ID];
@@ -343,7 +343,7 @@ async function pullFromCloud(silent = false) {
         if(!DATA.adjustments) DATA.adjustments = [];
         localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
         renderBoard();
-        statusEl.innerHTML = "✅ Tablo JSONBin ile Senkronize";
+        statusEl.innerHTML = "✅ Tablo JSONBin ile Tamamen Senkronize";
         return true;
       }
     }
@@ -364,9 +364,8 @@ async function pushToCloud() {
   const statusEl = document.getElementById('syncStatus');
   statusEl.innerHTML = "📤 Puanlar JSONBin bulutuna yükleniyor...";
   try {
-    // Önce mevcut bin içeriğini çekip tam yapıyı koruyalım
     let fullBin = {};
-    const getRes = await fetch(BIN_URL + "/latest", {
+    const getRes = await fetch(`${BIN_URL}/latest?_t=${Date.now()}`, {
       headers: {
         'X-Master-Key': MASTER_KEY,
         'X-Access-Key': ACCESS_KEY
@@ -527,7 +526,7 @@ document.getElementById('openBackup').addEventListener('click', () => openSheet(
 
 document.getElementById('quickUpdateBtn').addEventListener('click', async () => {
   await pullFromCloud(false);
-  alert("🎉 Tablo JSONBin bulutundaki en taze verilerle senkronize edildi!");
+  alert("🎉 Tablo JSONBin bulutundaki en güncel verilerle senkronize edildi!");
 });
 
 document.getElementById('closeSheet').addEventListener('click', closeAllSheets);
