@@ -322,16 +322,18 @@ function updateSlots() {
 document.getElementById('m-size').addEventListener('change', updateSlots);
 document.getElementById('m-day').addEventListener('change', updateSlots);
 
-// JSONBIN.IO: Önbelleği (Cache) Delen Dinamik Zaman Damgalı GET İsteği
+// JSONBIN.IO: Tamamen Güvenli ve Önbelleksiz Veri Çekme
 async function pullFromCloud(silent = false) {
   const statusEl = document.getElementById('syncStatus');
   if(!silent) statusEl.innerHTML = "⏳ JSONBin'den en taze veriler çekiliyor...";
   try {
-    // Tarayıcı veya CDN önbelleğini bypass etmek için rastgele _t ekleniyor
     const res = await fetch(`${BIN_URL}/latest?_t=${Date.now()}`, {
+      method: 'GET',
       headers: {
         'X-Master-Key': MASTER_KEY,
-        'X-Access-Key': ACCESS_KEY
+        'X-Access-Key': ACCESS_KEY,
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache'
       }
     });
     if(res.ok) {
@@ -359,16 +361,19 @@ async function pullFromCloud(silent = false) {
   return false;
 }
 
-// JSONBIN.IO: VERİ GÜNCELLEME (PUT)
+// JSONBIN.IO: Kapsamlı ve Kesin Veri Gönderme (PUT)
 async function pushToCloud() {
   const statusEl = document.getElementById('syncStatus');
   statusEl.innerHTML = "📤 Puanlar JSONBin bulutuna yükleniyor...";
   try {
+    // 1. Önce buluttaki son güncel tam şemayı çek
     let fullBin = {};
     const getRes = await fetch(`${BIN_URL}/latest?_t=${Date.now()}`, {
+      method: 'GET',
       headers: {
         'X-Master-Key': MASTER_KEY,
-        'X-Access-Key': ACCESS_KEY
+        'X-Access-Key': ACCESS_KEY,
+        'Cache-Control': 'no-cache'
       }
     });
     if(getRes.ok) {
@@ -376,8 +381,10 @@ async function pushToCloud() {
       fullBin = resp.record || resp;
     }
     
+    // 2. Kendi uygulamamıza ait veriyi en güncel hâliyle ekle
     fullBin[APP_ID] = DATA;
 
+    // 3. Buluta gönder
     const res = await fetch(BIN_URL, {
       method: 'PUT',
       headers: {
@@ -387,6 +394,7 @@ async function pushToCloud() {
       },
       body: JSON.stringify(fullBin)
     });
+    
     if(res.ok) {
       statusEl.innerHTML = "✅ Buluta Kaydedildi ve Eşitlendi!";
       return true;
