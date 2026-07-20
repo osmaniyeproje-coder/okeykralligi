@@ -142,7 +142,7 @@
     <div class="eyebrow">Temmuz Ayı Meclis Kararları</div>
     <h1>Krallık Liderlik Tablosu</h1>
     <div style="font-size:13px; color:var(--brass-bright); margin-top:6px;" id="leaderLine">Yükleniyor…</div>
-    <div class="status-text" id="syncStatus">Bulut Bağlantısı Hazır</div>
+    <div class="status-text" id="syncStatus">JSONBin.io Bağlantısı Hazır</div>
     
     <button class="giant-update-btn" id="quickUpdateBtn">
       ⚡ TABLOYU GÜNCELLE VE EŞİTLE ⚡
@@ -262,15 +262,18 @@
 </div>
 
 <script>
-const APP_ID = "okey_kralligi_temmuz_2026"; 
-const BIN_URL = `https://api.npoint.io/0ba03ba4cc30e9d6d376`; 
+// JSONBin.io Bilgileri
+const BIN_ID = "66a3ef18ad19ca34f8910b85"; // Mevcut Bin IDniz (varsayılan veya güncel bin id)
+const MASTER_KEY = "$2a$10$gwAz3iL7ucp6uKXjXnmk6e/iQGuvLgyhcfT66MunbCC1CE54LqmqS";
+const ACCESS_KEY = "$2a$10$V3v5rzz/JCz9AWcquzhIJe3qa6FIgjoQMAR5KCoYYhFK9NuihCZlW";
+const BIN_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
 
+const APP_ID = "okey_kralligi_temmuz_2026"; 
 const ADMIN_PASSWORDS = ["ugur123", "can123"];
 const DEFAULT_PLAYERS = ["Bahattin Konut","Mehmet Can Zile","Ahmet Ziya Bitim","Deniz Kuyluk","Seçkin Yılmaz","Rüştü Korkmaz","Recep Koca","Gökhan Toprak","Veysi Temel","Hakan Göktaş","Murat Gül","Aytek Evren","Fatih Öztekin","Ahmet Erkam Ketmen","Uğur Ede"];
 
-// DATA objesi hem eski manuel adjustments listesini hem de yeni "entries" (el maç kayıtlarını) barındırır.
 let DATA = { players: [...DEFAULT_PLAYERS], adjustments: [], entries: [] };
-const STORAGE_KEY = "okey_krallik_v5";
+const STORAGE_KEY = "okey_krallik_v6";
 
 // Akordeon Kontrolü
 document.getElementById('toggleKanun').addEventListener('click', () => {
@@ -304,7 +307,6 @@ function updateSlots() {
     const select = document.createElement('select');
     select.className = 'p-select';
     select.innerHTML = DATA.players.map(p => `<option value="${p}">${p}</option>`).join('');
-    // Varsayılan olarak farklı kişileri seçili getirelim
     select.selectedIndex = i % DATA.players.length;
 
     const span = document.createElement('span');
@@ -320,20 +322,28 @@ function updateSlots() {
 document.getElementById('m-size').addEventListener('change', updateSlots);
 document.getElementById('m-day').addEventListener('change', updateSlots);
 
-// BULUTTAN VERİ ÇEKME
+// JSONBIN.IO: VERİ ÇEKME (GET)
 async function pullFromCloud(silent = false) {
   const statusEl = document.getElementById('syncStatus');
-  if(!silent) statusEl.innerHTML = "⏳ Buluttan veriler çekiliyor...";
+  if(!silent) statusEl.innerHTML = "⏳ JSONBin'den güncel veriler çekiliyor...";
   try {
-    const res = await fetch(BIN_URL);
+    const res = await fetch(BIN_URL + "/latest", {
+      headers: {
+        'X-Master-Key': MASTER_KEY,
+        'X-Access-Key': ACCESS_KEY
+      }
+    });
     if(res.ok) {
-      const cloudData = await res.json();
+      const responseData = await res.json();
+      // JSONBin v3 yapısında veri .record içinde döner
+      const cloudData = responseData.record || responseData;
       if(cloudData && cloudData[APP_ID]) {
         DATA = cloudData[APP_ID];
-        if(!DATA.entries) DATA.entries = []; // Güvenlik önlemi
+        if(!DATA.entries) DATA.entries = [];
+        if(!DATA.adjustments) DATA.adjustments = [];
         localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
         renderBoard();
-        statusEl.innerHTML = "✅ Tablo Tamamen Güncel (Canlı)";
+        statusEl.innerHTML = "✅ Tablo JSONBin ile Senkronize";
         return true;
       }
     }
@@ -349,26 +359,37 @@ async function pullFromCloud(silent = false) {
   return false;
 }
 
-// BULUTA VERİ YAZMA
+// JSONBIN.IO: VERİ GÜNCELLEME (PUT)
 async function pushToCloud() {
   const statusEl = document.getElementById('syncStatus');
-  statusEl.innerHTML = "📤 Puanlar buluta yükleniyor...";
+  statusEl.innerHTML = "📤 Puanlar JSONBin bulutuna yükleniyor...";
   try {
+    // Önce mevcut bin içeriğini çekip tam yapıyı koruyalım
     let fullBin = {};
-    try {
-      const getRes = await fetch(BIN_URL);
-      if(getRes.ok) fullBin = await getRes.json();
-    } catch(e){}
+    const getRes = await fetch(BIN_URL + "/latest", {
+      headers: {
+        'X-Master-Key': MASTER_KEY,
+        'X-Access-Key': ACCESS_KEY
+      }
+    });
+    if(getRes.ok) {
+      const resp = await getRes.json();
+      fullBin = resp.record || resp;
+    }
     
     fullBin[APP_ID] = DATA;
 
     const res = await fetch(BIN_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': MASTER_KEY,
+        'X-Access-Key': ACCESS_KEY
+      },
       body: JSON.stringify(fullBin)
     });
     if(res.ok) {
-      statusEl.innerHTML = "✅ Tüm cihazlar eşitlendi!";
+      statusEl.innerHTML = "✅ Buluta Kaydedildi ve Eşitlendi!";
       return true;
     }
   } catch(e) {
@@ -377,17 +398,15 @@ async function pushToCloud() {
   return false;
 }
 
-// TOPLAM PUANLARI HESAPLAMA (Adjustments + Entries)
+// TOPLAM PUANLARI HESAPLAMA
 function computeTotals(){
   const totals = {};
   DATA.players.forEach(p => totals[p] = 0);
   
-  // 1. Ekstra ceza / ek puanlar
   DATA.adjustments.forEach(a => {
     if(totals.hasOwnProperty(a.player)) totals[a.player] += Number(a.points);
   });
 
-  // 2. JSON El / Maç kayıtlarından gelen puanlar
   if(DATA.entries && Array.isArray(DATA.entries)) {
     DATA.entries.forEach(entry => {
       if(entry.results) {
@@ -445,7 +464,6 @@ function showPlayerHistory(playerName) {
   const historyContainer = document.getElementById('playerHistory');
   const filteredAdj = DATA.adjustments.filter(a => a.player === playerName);
   
-  // Bu oyuncunun katıldığı el maçlarını bulalım
   const filteredEntries = [];
   if(DATA.entries) {
     DATA.entries.forEach((e, idx) => {
@@ -508,10 +526,8 @@ document.getElementById('openManual').addEventListener('click', () => {
 document.getElementById('openBackup').addEventListener('click', () => openSheet('backupSheet'));
 
 document.getElementById('quickUpdateBtn').addEventListener('click', async () => {
-  const success = await pullFromCloud();
-  if(success) {
-    alert("🎉 Tablo başarıyla en güncel bulut verileriyle senkronize edildi!");
-  }
+  await pullFromCloud(false);
+  alert("🎉 Tablo JSONBin bulutundaki en taze verilerle senkronize edildi!");
 });
 
 document.getElementById('closeSheet').addEventListener('click', closeAllSheets);
@@ -551,7 +567,7 @@ document.getElementById('saveManualEntry').addEventListener('click', async () =>
   if(!DATA.entries) DATA.entries = [];
   DATA.entries.push({ dayType, tableSize: size, results });
 
-  statusEl.textContent = "⏳ Buluta yükleniyor...";
+  statusEl.textContent = "⏳ JSONBin bulutuna yükleniyor...";
   localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
   renderBoard();
 
@@ -594,7 +610,7 @@ document.getElementById('saveAdjust').addEventListener('click', async () => {
   document.getElementById('admin-pass').value = "";
   document.getElementById('a-points').value = "";
   document.getElementById('a-reason').value = "";
-  alert(`✅ ${player} için puan kaydedildi ve tüm masayla eşitlendi!`);
+  alert(`✅ ${player} için puan kaydedildi ve JSONBin ile tüm masayla eşitlendi!`);
 });
 
 // YEDEK KOD İÇE AKTARMA
@@ -611,7 +627,7 @@ document.getElementById('saveImport').addEventListener('click', async () => {
       await pushToCloud();
       closeAllSheets();
       document.getElementById('importData').value = "";
-      alert("🎉 Tablo manuel kodla senkronize edildi!");
+      alert("🎉 Tablo manuel kodla JSONBin üzerinden senkronize edildi!");
     }
   } catch(e) {
     alert("Geçersiz kod.");
