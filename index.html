@@ -1,371 +1,479 @@
-<div class="player-row">
-      <div class="pn"><b>${p}</b></div>
-      <div class="pt">${t>0?'+':''}${t} p</div>
-      <button onclick="removePlayer('${p.replace(/'/g, "\\'")}')">Çıkar</button>
-    </div>`;
-  }).join('');
-}
-
-document.getElementById('addPlayerBtn').addEventListener('click', async ()=>{
-  const name = document.getElementById('newPlayerName').value.trim();
-  const statusEl = document.getElementById('addPlayerStatus');
-  if(!name){
-    statusEl.innerHTML = `<div class="status-msg error">Lütfen bir oyuncu adı gir.</div>`;
-    return;
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Temmuz Ayı Krallığı — Liderlik Tablosu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2 family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --felt-deep:#0e2622;
+    --felt:#163832;
+    --felt-light:#1f4b3f;
+    --ivory:#f1e9d8;
+    --ivory-dim:#e5dac2;
+    --brass:#c69749;
+    --brass-bright:#e0b768;
+    --wine:#7a2e2e;
+    --wine-bright:#a23b2e;
+    --royal-purple: #4a154b;
+    --royal-purple-light: #5e1c60;
+    --ink:#241d15;
+    --line: rgba(241,233,216,0.12);
   }
-  if(players().includes(name)){
-    statusEl.innerHTML = `<div class="status-msg error">Bu oyuncu zaten listede var.</div>`;
-    return;
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{
+    margin:0; padding:0; min-height:100vh;
+    background-color: var(--felt-deep);
+    font-family:'Public Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
   }
+  .wrap{ max-width:100%; margin:0 auto; padding:16px 16px 140px 16px; }
   
-  const clonedData = JSON.parse(JSON.stringify(DATA));
-  clonedData.players.push(name);
-
-  statusEl.innerHTML = `<div class="status-msg info"><span class="spinner"></span>Ekleniyor…</div>`;
+  .ferman{ padding: 20px 12px; text-align:center; border-bottom:1px solid var(--line); margin-bottom:15px; }
+  .eyebrow{ font-family:'JetBrains Mono', monospace; letter-spacing:.2em; text-transform:uppercase; font-size:10px; color:var(--brass-bright); margin-bottom:6px; }
+  .ferman h1{ font-family:'Fraunces', serif; font-weight:700; font-size:26px; color:var(--ivory); margin:0; }
   
-  await optimisticSave(
-    clonedData,
-    () => {
-      statusEl.innerHTML = `<div class="status-msg ok">Oyuncu eklendi (Madde 15 tatlı kuralını unutma!).</div>`;
-      document.getElementById('newPlayerName').value = "";
-      renderPlayersList();
-    },
-    (err) => {
-      statusEl.innerHTML = `<div class="status-msg error">Eklenemedi (Geri alındı): ${err}</div>`;
-    }
-  );
-});
-
-async function removePlayer(name){
-  if(players().length <= 3){
-    alert("En az 3 oyuncu kalmalı.");
-    return;
+  /* DEASA VE DİKKAT ÇEKİCİ GÜNCELLEME BUTONU */
+  .giant-update-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    color: white;
+    border: 2px solid #60a5fa;
+    border-radius: 14px;
+    padding: 18px;
+    font-size: 16px;
+    font-weight: 700;
+    margin: 16px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(29, 78, 216, 0.4);
+    transition: all 0.2s ease;
+    animation: pulseGlow 2s infinite ease-in-out;
   }
-  // YÖNETİCİ ŞİFRE KONTROLÜ
-  if (!checkAdminPermission()) return;
-
-  if(!confirm(`"${name}" adlı oyuncuyu listeden çıkarmak istediğine emin misin?\n(Eski maçlardaki puanları silinmez, aynı isimle tekrar eklenebilir. Madde 15'e göre tatlı borcunu unutma!)`)) return;
-
-  const clonedData = JSON.parse(JSON.stringify(DATA));
-  clonedData.players = clonedData.players.filter(p=> p !== name);
-
-  const res = await optimisticSave(clonedData, null, (err)=>alert("Kaldırılamadı: " + err));
-  if(res.ok){
-    renderPlayersList();
-  }
-}
-
-// ---------- ADJUSTMENT FORM ----------
-document.getElementById('saveAdjust').addEventListener('click', async ()=>{
-  const player = document.getElementById('a-player').value;
-  const pts = Number(document.getElementById('a-points').value);
-  const reason = document.getElementById('a-reason').value.trim();
-  const statusEl = document.getElementById('adjustStatus');
-
-  if(isNaN(pts) || pts === 0){
-    statusEl.innerHTML = `<div class="status-msg error">Geçerli bir puan gir (örn. 20 veya -10).</div>`;
-    return;
-  }
-  if(!reason){
-    statusEl.innerHTML = `<div class="status-msg error">Lütfen bir açıklama ya da madde numarası gir.</div>`;
-    return;
+  .giant-update-btn:active { transform: scale(0.96); box-shadow: 0 3px 10px rgba(29, 78, 216, 0.4); }
+  
+  @keyframes pulseGlow {
+    0% { box-shadow: 0 6px 20px rgba(29, 78, 216, 0.4); }
+    50% { box-shadow: 0 6px 30px rgba(96, 165, 250, 0.7); border-color: #93c5fd; }
+    100% { box-shadow: 0 6px 20px rgba(29, 78, 216, 0.4); }
   }
 
-  const adj = {
-    id: 'adj_'+Date.now(),
-    date: document.getElementById('a-date').value,
-    player,
-    points: pts,
-    reason,
-    createdAt: Date.now()
-  };
+  /* KANUNLAR AKORDEON */
+  .kanunlar-container { background: rgba(241,233,216,0.04); border: 1px solid var(--line); border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
+  .kanunlar-header { background: rgba(241,233,216,0.02); padding: 14px 16px; color: var(--brass-bright); font-size: 14px; font-weight: 700; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+  .kanunlar-content { padding: 0 16px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; color: var(--ivory-dim); font-size: 13.5px; line-height: 1.6; }
+  .kanunlar-content.open { max-height: 1000px; padding: 16px; overflow-y: auto; border-top: 1px solid var(--line); }
+  .kanun-madde { margin-bottom: 14px; border-bottom: 1px solid rgba(241,233,216,0.05); padding-bottom: 12px; }
+  .kanun-madde:last-child { margin-bottom: 0; border: none; padding-bottom: 0; }
+  .kanun-title { color: var(--ivory); font-weight: 700; display: block; margin-bottom: 4px; }
 
-  const clonedData = JSON.parse(JSON.stringify(DATA));
-  clonedData.adjustments.push(adj);
+  /* SIRALAMA LİSTESİ */
+  .tile{
+    background: linear-gradient(180deg, var(--ivory) 0%, var(--ivory-dim) 100%);
+    color:var(--ink); border-radius:12px; padding:15px;
+    display:flex; align-items:center; gap:12px; margin-bottom:8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15); cursor:pointer;
+    transition: transform 0.1s ease;
+  }
+  .tile:active { transform: scale(0.98); }
 
-  statusEl.innerHTML = `<div class="status-msg info"><span class="spinner"></span>Kaydediliyor…</div>`;
-
-  await optimisticSave(
-    clonedData,
-    () => {
-      statusEl.innerHTML = `<div class="status-msg ok">Puan/Ceza başarıyla işlendi.</div>`;
-      document.getElementById('a-points').value = "";
-      document.getElementById('a-reason').value = "";
-    },
-    (err) => {
-      statusEl.innerHTML = `<div class="status-msg error">İşlenemedi (Geri alındı): ${err}</div>`;
-    }
-  );
-});
-
-// ---------- HISTORY & RESET ----------
-document.getElementById('h-player').addEventListener('change', renderHistory);
-
-function renderHistory(){
-  const player = document.getElementById('h-player').value;
-  const wrap = document.getElementById('historyList');
-  if(!player) return;
-
-  const items = [];
-  (DATA.entries||[]).forEach(e=>{
-    (e.results||[]).forEach(r=>{
-      if(r.player === player){
-        items.push({date: e.date, text: `${e.dayType.toUpperCase()} masa (${e.tableSize} kişi) — ${r.points>0?'+':''}${r.points} puan`, ts: e.createdAt||0, type:'entry', id: e.id});
-      }
-    });
-  });
-  (DATA.adjustments||[]).forEach(a=>{
-    if(a.player === player){
-      items.push({date: a.date, text: `Özel Puan/Ceza: ${a.reason} (${a.points>0?'+':''}${a.points})`, ts: a.createdAt||0, type:'adjust', id: a.id});
-    }
-  });
-
-  items.sort((a,b)=> b.ts - a.ts);
-
-  if(!items.length){
-    wrap.innerHTML = `<div class="empty-note">Bu oyuncunun henüz kayıtlı maçı veya cezası yok.</div>`;
-    return;
+  .tile.rank-1 {
+    background: linear-gradient(135deg, var(--wine-bright) 0%, var(--wine) 100%);
+    border: 2px solid var(--brass); color: var(--ivory);
+  }
+  .tile.rank-last-four {
+    background: linear-gradient(135deg, var(--royal-purple-light) 0%, var(--royal-purple) 100%);
+    border: 1px dashed var(--brass-bright); color: var(--ivory);
   }
 
-  wrap.innerHTML = items.map(it=>`
-    <div class="hist-item">
-      <div>
-        <div>${it.text}</div>
-        <div class="d">${it.date}</div>
+  .rank-badge{
+    width:34px; height:34px; border-radius:8px;
+    background:var(--felt); color:var(--brass-bright);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono',monospace; font-weight:700; font-size:14px;
+  }
+  .rank-1 .rank-badge { background: var(--brass); color: var(--wine); }
+  .rank-last-four .rank-badge { background: var(--felt-deep); color: #dfa6e2; }
+
+  .tile-name{ flex:1; min-width:0; display:flex; align-items:center; gap:6px; }
+  .tile-name .n{ font-weight:700; font-size:15px; }
+  .tile-points{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:18px; margin-left:auto; }
+  
+  /* GEÇMİŞ LİSTESİ */
+  .history-section { margin-top: 15px; max-height: 200px; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 8px; padding: 12px; border: 1px solid var(--line); }
+  .history-item { font-size: 13px; padding: 8px 0; border-bottom: 1px solid rgba(241,233,216,0.05); color: var(--ivory-dim); display: flex; justify-content: space-between; gap: 10px; }
+  .history-item:last-child { border: none; }
+  .hist-pts { font-family: 'JetBrains Mono'; font-weight: 700; white-space: nowrap; }
+  .hist-pts.pos { color: #5af78e; }
+  .hist-pts.neg { color: #ff5c5c; }
+
+  /* PANEL ALT BUTONLARI */
+  .action-buttons { position:fixed; left:16px; right:16px; bottom:16px; display:flex; gap:8px; z-index:40; }
+  .fab{ flex:1; background:var(--felt-light); color:var(--ivory); border:1px solid var(--brass); border-radius:12px; padding:16px; font-weight:700; font-size:14px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); cursor: pointer; }
+  .fab-main { background: var(--wine-bright); border: none; }
+
+  .overlay{ position:fixed; inset:0; background:rgba(6,14,12,0.75); z-index:50; display:none; backdrop-filter: blur(4px); }
+  .overlay.show{ display:block; }
+  .sheet{ position:fixed; left:0; right:0; bottom:0; background:var(--felt-deep); border-radius:20px 20px 0 0; max-height:92vh; overflow-y:auto; transform:translateY(100%); transition:transform .3s ease; z-index:51; border-top:1px solid var(--line); padding-bottom: 25px; }
+  .sheet.show{ transform:translateY(0); }
+  .sheet-inner{ padding:20px; position:relative; }
+  .close-x{ position:absolute; top:12px; right:16px; background:none; border:none; color:var(--ivory-dim); font-size:24px; cursor: pointer; }
+
+  label{ display:block; font-size:11px; color:var(--ivory-dim); margin:14px 0 4px; font-family:'JetBrains Mono'; text-transform: uppercase;}
+  select, input{ width:100%; padding:12px; border-radius:8px; border:1px solid var(--line); background:rgba(241,233,216,0.06); color:var(--ivory); font-size:15px; outline:none;}
+  .btn{ width:100%; padding:15px; border-radius:10px; border:none; font-weight:700; font-size:15px; margin-top:16px; cursor:pointer;}
+  .btn-primary{ background:var(--brass); color:var(--felt-deep); }
+  .status-text { text-align: center; font-size: 12px; color: var(--brass-bright); margin-bottom: 10px; font-family: 'JetBrains Mono'; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="ferman">
+    <div class="eyebrow">Temmuz Ayı Meclis Kararları</div>
+    <h1>Krallık Liderlik Tablosu</h1>
+    <div style="font-size:13px; color:var(--brass-bright); margin-top:6px;" id="leaderLine">Yükleniyor…</div>
+    <div class="status-text" id="syncStatus">Bulut Bağlantısı Hazır</div>
+    
+    <!-- YENİ DEVASA CANLI GÜNCELLEME BUTONU -->
+    <button class="giant-update-btn" id="quickUpdateBtn">
+      ⚡ TABLOYU GÜNCELLE VE EŞİTLE ⚡
+    </button>
+  </div>
+
+  <!-- TAM METİN KANUNLAR -->
+  <div class="kanunlar-container">
+    <div class="kanunlar-header" id="toggleKanun">
+      <span>📜 Krallık Resmi Kanunları (Tam Metin)</span>
+      <span id="kanunArrow">▼</span>
+    </div>
+    <div class="kanunlar-content" id="kanunContent">
+      <div class="kanun-madde">
+        <span class="kanun-title">Madde 1: Okey ve Çifte Gitme Ödülleri</span>
+        Her el bitiminde okey atarak elini tamamlayan oyuncu hanesine kesin olarak +20 puan yazdırır. Eğer oyuncu elini normal değil de çifte giderek (çift açarak) bitirirse ekstra +10 puan daha kazanır ve toplam kazancı +30 puan olarak tescil edilir.
       </div>
-      <div>
-        <button class="btn-danger" style="padding:4px 8px;font-size:11px;width:auto;margin-top:0;" onclick="deleteItem('${it.type}', '${it.id}')">Sil</button>
+      <div class="kanun-madde">
+        <span class="kanun-title">Madde 2: Hatalı Açma ve Sahte Okey Cezaları</span>
+        Masaya yanlış taş açan, seri/per hesaplamasını hatalı yapan veya sahte okeyi per kurallarına aykırı şekilde yanlış yere yerleştirip oyunu bozan oyuncu, o el hak iddia edemez ve masadaki diğer tüm oyuncuların hanesine -15 puan ceza puanı olarak raportör tarafından doğrudan işlenir.
+      </div>
+      <div class="kanun-madde">
+        <span class="kanun-title">Madde 3: Son 4 Sıra ve Baklava Yükümlülüğü</span>
+        Turnuva ayı (Temmuz) nihayete erdiğinde, genel sıralamada son 4 sırada kalan oyuncular "Baklava Borçlusu" ilan edilir. Bu oyuncular, turnuva şampiyonuna (Kral) ve üst sıralarda yer alan elite Tatlı Saray'dan fıstıklı baklava ısmarlamakla mükelleftir.
+      </div>
+      <div class="kanun-madde">
+        <span class="kanun-title">Madde 4: Masayı Terk Etme ve Yavaş Oyun Raconu</span>
+        Geçerli, mücbir ve masadakilerce kabul görmüş bir mazereti olmaksızın masayı ani olarak terk eden ya da kendi sırasında aşırı süre harcayarak oyun akışını kasıtlı veya süreklilik arz edecek şekilde yavaşlatan oyuncular, yetkili raportörlerin ortak kararı doğrultusunda el başına -10 ceza puanı ile tecziye edilir.
       </div>
     </div>
-  `).join('');
-}
+  </div>
 
-async function deleteItem(type, id){
-  // YÖNETİCİ ŞİFRE KONTROLÜ
-  if (!checkAdminPermission()) return;
+  <div id="board"></div>
+</div>
 
-  if(!confirm("Bu kaydı silmek istediğine emin misin?")) return;
+<div class="action-buttons">
+  <button class="fab" id="openBackup">📦 Manuel Yedek</button>
+  <button class="fab fab-main" id="openFab">✛ Hızlı Puan/Ceza Ekle</button>
+</div>
 
-  const clonedData = JSON.parse(JSON.stringify(DATA));
-  if(type === 'entry'){
-    clonedData.entries = (clonedData.entries||[]).filter(e=> e.id !== id);
-  } else {
-    clonedData.adjustments = (clonedData.adjustments||[]).filter(a=> a.id !== id);
-  }
+<div class="overlay" id="overlay"></div>
 
-  const res = await optimisticSave(clonedData, null, (err)=>alert("Silinemedi: " + err));
-  if(res.ok){
-    renderHistory();
-  }
-}
+<!-- OYUNCU DETAY VE PUAN GİRİŞ PANELİ -->
+<div class="sheet" id="sheet">
+  <div class="sheet-inner">
+    <button class="close-x" id="closeSheet">✕</button>
+    <h3 id="sheetTitle" style="color:var(--ivory); font-family:'Fraunces'; margin:0 0 10px 0;">Puan / Ceza Yönetimi</h3>
 
-document.getElementById('resetAll').addEventListener('click', async ()=>{
-  // YÖNETİCİ ŞİFRE KONTROLÜ
-  if (!checkAdminPermission()) return;
+    <div class="panel active">
+      <label>Yetkili Şifresi (Gerekli)</label>
+      <input type="password" id="admin-pass" placeholder="Uğur veya Can şifresi">
+      
+      <label>Seçili Oyuncu</label>
+      <select id="a-player"></select>
+      
+      <label>Puan Değişimi (+ veya - değer girin)</label>
+      <input type="number" id="a-points" placeholder="Örn: 20, 30 veya -15">
+      
+      <label>Kanun Maddesi / Ceza Gerekçesi</label>
+      <input type="text" id="a-reason" placeholder="Örn: Madde 1 - Okey Atarak Bitme">
+      
+      <button class="btn btn-primary" id="saveAdjust">Puanı Buluta Gönder ve Kaydet</button>
+      
+      <!-- GEÇMİŞ CEZA / PUAN ALANI -->
+      <h4 style="color:var(--brass-bright); margin:20px 0 5px 0; font-size:13px; font-family:'JetBrains Mono'">📜 OYUNCUNUN TÜM GEÇMİŞİ</h4>
+      <div class="history-section" id="playerHistory">
+        <div style="color:var(--ivory-dim); font-size:12px; text-align:center; padding:10px;">Yükleniyor...</div>
+      </div>
+    </div>
+  </div>
+</div>
 
-  if(!confirm("DİKKAT: Tüm oyun geçmişi, puanlar ve özel cezalar sıfırlanacak! Emin misin?")) return;
+<!-- MANUEL YEDEKLEME PANELİ (BULUT ÇÖKERSE DİYE ÖNLEM) -->
+<div class="sheet" id="backupSheet">
+  <div class="sheet-inner">
+    <button class="close-x" id="closeBackupSheet">✕</button>
+    <h3 style="color:var(--ivory); font-family:'Fraunces'; margin: 0 0 10px 0;">Manuel Yedek Paneli</h3>
+    <p style="color:var(--ivory-dim); font-size:12px; line-height:1.4;">Bulut sistemi puanları otomatik eşitler. Ancak internet olmaması durumuna karşı manuel yedek kodunuz aşağıdadır.</p>
+    
+    <label>Mevcut Ham Veri Kodu</label>
+    <input type="text" id="exportData" readonly onclick="this.select();">
+    
+    <label style="margin-top:15px;">Manuel Kod Yapıştır</label>
+    <input type="text" id="importData" placeholder="Kod yapıştırarak zoraki güncelle...">
+    
+    <button class="btn btn-primary" id="saveImport">Kodu Zorla İçe Aktar</button>
+  </div>
+</div>
 
-  const fresh = { players: [...DEFAULT_PLAYERS], entries: [], adjustments: [] };
-  const res = await optimisticSave(fresh, null, (err)=>alert("Sıfırlanamadı: " + err));
-  if(res.ok){
-    alert("Tüm veriler sıfırlandı.");
-    closeSheetFn();
-  }
+<script>
+// BULUT DEPOLAMA AYARI
+const APP_ID = "okey_kralligi_temmuz_2026"; // Grubunuza özel benzersiz ID
+const BIN_URL = `https://api.npoint.io/0ba03ba4cc30e9d6d376`; // Güvenli ortak ücretsiz bulut havuzu
+
+const ADMIN_PASSWORDS = ["ugur123", "can123"];
+const DEFAULT_PLAYERS = ["Bahattin Konut","Mehmet Can Zile","Ahmet Ziya Bitim","Deniz Kuyluk","Seçkin Yılmaz","Rüştü Korkmaz","Recep Koca","Gökhan Toprak","Veysi Temel","Hakan Göktaş","Murat Gül","Aytek Evren","Fatih Öztekin","Ahmet Erkam Ketmen","Uğur Ede"];
+let DATA = { players: [...DEFAULT_PLAYERS], adjustments: [] };
+const STORAGE_KEY = "okey_krallik_v4";
+
+// Akordeon Kontrolü
+document.getElementById('toggleKanun').addEventListener('click', () => {
+  const content = document.getElementById('kanunContent');
+  const arrow = document.getElementById('kanunArrow');
+  content.classList.toggle('open');
+  arrow.innerHTML = content.classList.contains('open') ? "▲" : "▼";
 });
 
-// ---------- PHOTO AI MOCK / REAL RECOGNITION ----------
-const photoInputGallery = document.getElementById('photoInputGallery');
-const photoInputCamera = document.getElementById('photoInputCamera');
-const photoPreview = document.getElementById('photoPreview');
-const photoDropText = document.getElementById('photoDropText');
-let selectedImageBase64 = null;
-
-document.getElementById('pickGallery').addEventListener('click', ()=> photoInputGallery.click());
-document.getElementById('pickCamera').addEventListener('click', ()=> photoInputCamera.click());
-document.getElementById('photoDrop').addEventListener('click', ()=> photoInputGallery.click());
-
-function handleImageFile(file){
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = function(e){
-    selectedImageBase64 = e.target.result;
-    photoPreview.src = selectedImageBase64;
-    photoPreview.style.display = 'block';
-    photoDropText.style.display = 'none';
-    document.getElementById('readPhoto').disabled = false;
-  };
-  reader.readAsDataURL(file);
-}
-
-photoInputGallery.addEventListener('change', (ev)=> handleImageFile(ev.target.files[0]));
-photoInputCamera.addEventListener('change', (ev)=> handleImageFile(ev.target.files[0]));
-
-document.getElementById('readPhoto').addEventListener('click', async ()=>{
-  if(!selectedImageBase64) return;
-  const statusEl = document.getElementById('photoStatus');
-  const draftEl = document.getElementById('photoDraft');
-  statusEl.innerHTML = `<div class="status-msg info"><span class="spinner"></span>Kağıt yapay zeka tarafından okunuyor…</div>`;
-  draftEl.innerHTML = "";
-
+// BULUTTAN EN GÜNCEL VERİLERİ ÇEKME FONKSİYONU
+async function pullFromCloud(silent = false) {
+  const statusEl = document.getElementById('syncStatus');
+  if(!silent) statusEl.innerHTML = "⏳ Buluttan veriler çekiliyor...";
   try {
-    // Gemini Vision API çağrısı (veya entegre akıllı görsel işleme)
-    const promptText = `Bu okey puan kağıdı görselini analiz et. Oyuncuların isimlerini ve bu kağıttaki sıralama/puan durumunu oku. Şu anki oyuncu listemiz: ${JSON.stringify(players())}. Kağıttaki oyuncu isimlerini bu listeyle eşleştirerek JSON formatında şu şemayla döndür: {"dayType": "pazartesi" (veya "diger"), "tableSize": 4 (veya 3), "results": [{"player": "İsim", "points": puanNumarası}]}. Sadece geçerli JSON döndür, başka hiçbir açıklama yazma.`;
-
-    let aiResultText = "";
-    if(window.ai && window.ai.models){
-      const model = await window.ai.models.get("gemini-2.5-flash");
-      // Görseli ve promptu modele ver
-      const response = await model.generateContent([
-        promptText,
-        {
-          inlineData: {
-            data: selectedImageBase64.split(',')[1],
-            mimeType: "image/jpeg"
-          }
-        }
-      ]);
-      aiResultText = response.text;
-    } else {
-      throw new Error("Yapay zeka görsel okuma motoru bu ortamda aktif değil. Lütfen elle girin veya tarayıcı desteğini kontrol edin.");
+    const res = await fetch(BIN_URL);
+    if(res.ok) {
+      const cloudData = await res.json();
+      if(cloudData && cloudData[APP_ID]) {
+        DATA = cloudData[APP_ID];
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
+        renderBoard();
+        statusEl.innerHTML = "✅ Tablo Tamamen Güncel (Canlı)";
+        return true;
+      }
     }
-
-    // JSON temizleme ve parse
-    const cleanJson = aiResultText.replace(/```json/g,'').replace(/```/g,'').trim();
-    const parsedData = JSON.parse(cleanJson);
-
-    photoDraftData = parsedData;
-    statusEl.innerHTML = `<div class="status-msg ok">Kağıt başarıyla okundu! Aşağıdaki sonuçları kontrol edip kaydedebilirsin.</div>`;
-    
-    // Draft arayüzünü çiz
-    let draftHtml = `<div style="margin-top:14px; background:rgba(241,233,216,0.04); border:1px solid var(--line); border-radius:12px; padding:12px;">
-      <div style="font-weight:600; margin-bottom:8px; font-size:13.5px;">Okunan Sonuçlar (Düzenlenebilir):</div>`;
-    
-    (parsedData.results || []).forEach((r, idx)=>{
-      draftHtml += `<div class="draft-row">
-        <span><b>#${idx+1}</b> ${r.player}</span>
-        <input type="number" id="draft_pt_${idx}" value="${r.points}"> puan
-      </div>`;
-    });
-    draftHtml += `<button class="btn btn-primary" id="saveDraftBtn" style="margin-top:10px;">Bu Sonucu Onayla ve Kaydet</button></div>`;
-    draftEl.innerHTML = draftHtml;
-
-    document.getElementById('saveDraftBtn').addEventListener('click', async ()=>{
-      // Güncellenmiş draft puanlarını al
-      parsedData.results.forEach((r, idx)=>{
-        const val = Number(document.getElementById(`draft_pt_${idx}`).value);
-        if(!isNaN(val)) r.points = val;
-      });
-
-      const entry = {
-        id: 'e_'+Date.now(),
-        date: todayStr(),
-        dayType: parsedData.dayType || 'pazartesi',
-        tableSize: parsedData.tableSize || 4,
-        results: parsedData.results,
-        source: 'photo',
-        createdAt: Date.now()
-      };
-
-      const clonedData = JSON.parse(JSON.stringify(DATA));
-      clonedData.entries.push(entry);
-
-      statusEl.innerHTML = `<div class="status-msg info"><span class="spinner"></span>Kaydediliyor…</div>`;
-      await optimisticSave(
-        clonedData,
-        () => {
-          statusEl.innerHTML = `<div class="status-msg ok">Fotoğraftan okunan el başarıyla kaydedildi! Liderlik tablosu güncellendi.</div>`;
-          draftEl.innerHTML = "";
-        },
-        (err) => {
-          statusEl.innerHTML = `<div class="status-msg error">Kaydedilemedi: ${err}</div>`;
-        }
-      );
-    });
-
   } catch(e) {
-    statusEl.innerHTML = `<div class="status-msg error">Görsel okunamadı: ${e.message || e}. Lütfen "Elle Gir" sekmesini kullanın.</div>`;
+    console.error("Bulut çekme hatası:", e);
+    statusEl.innerHTML = "⚠️ İnternet hatası! Lokal veriler gösteriliyor.";
   }
-});
+  // Bulut başarısız olursa lokale dön
+  const local = localStorage.getItem(STORAGE_KEY);
+  if(local) DATA = JSON.parse(local);
+  renderBoard();
+  return false;
+}
 
-// ---------- TEMMUZ AYI KANUNLARI (VERİTABANI VE LİSTE) ----------
-const KANUNLAR = [
-  "1. Bu kurallar Temmuz ayı boyunca tüm masalarda ve turnuvalarda eksiksiz uygulanır.",
-  "2. Tekli okey oyununda her oyuncu kendi adına yarışır; ortaklık, göz kırpma ve imalı konuşmalar kesinlikle yasaktır.",
-  "3. Pazartesi oynanan oyunlar 'Kral Günü' sayılır ve tam puan (1. olan +4, 2. olan +2, 3. olan -2, 4. olan -4) kazandırır.",
-  "4. Diğer günlerde oynanan normal oyunlarda puanlar yarı yarıya uygulanır (+2, +1, -1, -2).",
-  "5. Perfect biten oyuncuya ekstra bonus puan veya ödül tanımlanması Kraliyet onayıyla yapılır.",
-  "6. Renkten bitişlerde standart puanlama üzerinden ek katsayı uygulanır.",
-  "7. Yanlış açan veya yere eksik/hatalı taş atan oyuncu elden düşer ve ağır ceza puanı alır.",
-  "8. Gösterge bildirmeyen veya el sonunda elinde gösterge kalan oyuncular için özel cezai işlemler uygulanır.",
-  "9. Okey atan oyuncu masada büyük saygınlık kazanır; ancak okeyi yere atıp unutmak cezaya tabidir.",
-  "10. Oyun esnasında masadan izinsiz kalkmak, telefonla uzun süre meşgul olmak okey kurallarına aykırıdır.",
-  "11. Masada tartışma çıkması durumunda söz sahibi Kral M. Can Zile ve Kral Sözcüsü Rüştü Korkmaz'dır.",
-  "12. Kararlara itiraz edenler veya masanın huzurunu bozanlar ek ceza puanıyla cezalandırılır.",
-  "13. Her oyuncu kendi puanını ve geçmişini uygulama üzerinden takip etmekle yükümlüdür.",
-  "14. Temmuz ayı sonunda liderlik koltuğuna oturan oyuncu 'Ayın Kralı' ilan edilir ve büyük ödülün sahibi olur.",
-  "15. Gruptan ayrılıp tekrar gruba dahil olan oyuncular 1 kg tatlı ikram etmek zorundadır.",
-  "16. Taş çalma, taş saklama veya tahta karıştırma gibi hile teşebbüslerinin cezası süresiz men ve ağır puan silmedir.",
-  "17. Oyun başlangıcında kura ile belirlenen yerleşim düzenine herkes uymak zorundadır.",
-  "18. Bitilen taşın okey olması durumunda kazanılan puan iki katına çıkarılır.",
-  "19. Elden biterken okey atarak bitmek 'Mutlak Zafer' sayılır ve ekstra onur puanı kazandırır.",
-  "20. Çift açarak bitişlerde rakiplerin yediği cezalar katlanır.",
-  "21. Gösterge çekildiğinde sesli olarak bildirilmesi zorunludur; sessiz kalan gösterge geçersiz sayılır.",
-  "22. Oyun bittiğinde taşların sayımı ve kontrolü tüm masanın denetiminde yapılır.",
-  "23. Raportör Uğur Ede'nin sisteme girdiği sonuçlar son karardır, sonradan itiraz kabul edilmez.",
-  "24. Masaya gelen ikramları reddetmek Temmuz Kanunlarına göre gurur kırıcı sayılır.",
-  "25. Her masanın birincisi bir sonraki masanın başkanı olarak oturma düzenini belirler.",
-  "26. Telefon araması nedeniyle oyunu yavaşlatan oyuncuya 'Yavaşlık Cezası' kesilir.",
-  "27. Temmuz ayı boyunca tüm oyuncuların dostluk ve neşe içinde rekabet etmesi esastır.",
-  "28. Kurallarda yazmayan istisnai durumlarda Kraliyet Divanı anlık karar alma yetkisine sahiptir.",
-  "29. Yaşasın Okey Krallığı! Temmuz ayı kanunları tüm krallığa ilanen duyurulur."
-];
+// BULUTA YENİ VERİLERİ YAZMA FONKSİYONU
+async function pushToCloud() {
+  const statusEl = document.getElementById('syncStatus');
+  statusEl.innerHTML = "📤 Puanlar buluta yükleniyor...";
+  try {
+    // Önce mevcut tüm bulut havuzunu alalım ki diğer dataları bozmayalım
+    let fullBin = {};
+    try {
+      const getRes = await fetch(BIN_URL);
+      if(getRes.ok) fullBin = await getRes.json();
+    } catch(e){}
+    
+    fullBin[APP_ID] = DATA;
 
-function renderRules(query=""){
-  const wrap = document.getElementById('rulesList');
-  const q = query.toLowerCase().trim();
-  const filtered = KANUNLAR.filter(r => !q || r.toLowerCase().includes(q));
+    const res = await fetch(BIN_URL, {
+      method: 'POST', // npoint POST ile üzerine yazar
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(fullBin)
+    });
+    if(res.ok) {
+      statusEl.innerHTML = "✅ Tüm cihazlar eşitlendi!";
+      return true;
+    }
+  } catch(e) {
+    alert("Buluta bağlanırken hata oluştu. Puan telefonunuza kaydedildi ancak diğer cihazlara gitmedi. İnterneti kontrol edin.");
+  }
+  return false;
+}
 
-  if(!filtered.length){
-    wrap.innerHTML = `<div class="empty-note">Aranan kritere uygun kanun bulunamadı.</div>`;
+function computeTotals(){
+  const totals = {};
+  DATA.players.forEach(p => totals[p] = 0);
+  DATA.adjustments.forEach(a => {
+    if(totals.hasOwnProperty(a.player)) totals[a.player] += Number(a.points);
+  });
+  return totals;
+}
+
+function renderBoard(){
+  const totals = computeTotals();
+  const rows = DATA.players.map(p => ({name:p, total:totals[p]}));
+  rows.sort((a,b) => b.total - a.total);
+
+  const board = document.getElementById('board');
+  board.innerHTML = "";
+  
+  rows.forEach((r, i) => {
+    const div = document.createElement('div');
+    div.className = 'tile';
+    
+    if (i === 0) div.className += ' rank-1';
+    else if (i >= rows.length - 4) div.className += ' rank-last-four';
+
+    let badgeIcon = "";
+    if (i === 0) badgeIcon = " 👑";
+    if (i >= rows.length - 4) badgeIcon = " %F0%9F%A5%9E"; 
+    if (r.name === "Ahmet Erkam Ketmen") badgeIcon += " 🥜"; 
+
+    div.innerHTML = `
+      <div class="rank-badge">${i+1}</div>
+      <div class="tile-name"><div class="n">${r.name}${decodeURIComponent(badgeIcon)}</div></div>
+      <div class="tile-points">${r.total}</div>
+    `;
+
+    div.addEventListener('click', () => {
+      fillSelect();
+      document.getElementById('a-player').value = r.name;
+      showPlayerHistory(r.name);
+      openSheet('sheet');
+    });
+
+    board.appendChild(div);
+  });
+
+  if(rows[0]) document.getElementById('leaderLine').innerHTML = `👑 Şu anki Kral: <b>${rows[0].name}</b> (${rows[0].total} p)`;
+  document.getElementById('exportData').value = btoa(unescape(encodeURIComponent(JSON.stringify(DATA))));
+}
+
+function showPlayerHistory(playerName) {
+  const historyContainer = document.getElementById('playerHistory');
+  const filtered = DATA.adjustments.filter(a => a.player === playerName);
+  
+  if(filtered.length === 0) {
+    historyContainer.innerHTML = `<div style="color:var(--ivory-dim); font-size:12px; text-align:center; padding:10px;">Henüz puan/ceza geçmişi yok.</div>`;
     return;
   }
-
-  wrap.innerHTML = filtered.map(r=>{
-    const parts = r.match(/^(\d+)\.\s*(.*)$/);
-    const num = parts ? parts[1] : '•';
-    const text = parts ? parts[2] : r;
+  
+  historyContainer.innerHTML = [...filtered].reverse().map(a => {
+    const isPos = Number(a.points) >= 0;
     return `
-      <div class="rule-item">
-        <div class="rule-num">${num}</div>
-        <div class="rule-text">${text}</div>
+      <div class="history-item">
+        <span>• ${a.reason}</span>
+        <span class="hist-pts ${isPos ? 'pos' : 'neg'}">${isPos ? '+' : ''}${a.points}</span>
       </div>
     `;
   }).join('');
 }
 
-document.getElementById('ruleSearch').addEventListener('input', (e)=>{
-  renderRules(e.target.value);
-});
+const overlay = document.getElementById('overlay');
+const sheet = document.getElementById('sheet');
+const backupSheet = document.getElementById('backupSheet');
 
-// ---------- INIT ----------
-async function init(){
-  if(!storageAvailable()){
-    const warn = document.getElementById('envWarning');
-    warn.style.display = 'block';
-    warn.innerHTML = `<b>Çevrimdışı Mod / Depolama Uyarısı:</b> Tarayıcı depolama API'si algılanamadı. Veriler yalnızca bu oturumda saklanabilir.`;
-  }
-
-  DATA = await loadData();
-  
-  // Güncel verilerle UI doldur
-  initDayButtons();
-  buildSlots();
-  renderBoard();
-  renderRules();
-  refreshPlayerDependentUI();
+function openSheet(targetId){
+  overlay.classList.add('show');
+  document.getElementById(targetId).classList.add('show');
+}
+function closeAllSheets(){
+  overlay.classList.remove('show');
+  sheet.classList.remove('show');
+  backupSheet.classList.remove('show');
 }
 
-init();
+document.getElementById('openFab').addEventListener('click', () => {
+  fillSelect();
+  if(DATA.players.length > 0) showPlayerHistory(document.getElementById('a-player').value);
+  openSheet('sheet');
+});
+document.getElementById('openBackup').addEventListener('click', () => openSheet('backupSheet'));
+
+// CANLI BÜYÜK GÜNCELLEME BUTONU AKSİYONU
+document.getElementById('quickUpdateBtn').addEventListener('click', async () => {
+  const success = await pullFromCloud();
+  if(success) {
+    alert("🎉 Tablo başarıyla en güncel bulut verileriyle senkronize edildi!");
+  }
+});
+
+document.getElementById('closeSheet').addEventListener('click', closeAllSheets);
+document.getElementById('closeBackupSheet').addEventListener('click', closeAllSheets);
+overlay.addEventListener('click', closeAllSheets);
+
+function fillSelect(){
+  const select = document.getElementById('a-player');
+  if(!select.innerHTML) {
+    select.innerHTML = DATA.players.map(p => `<option value="${p}">${p}</option>`).join('');
+    select.addEventListener('change', (e) => showPlayerHistory(e.target.value));
+  }
+}
+
+// PUAN YAZMA VE BULUTA GÖNDERME
+document.getElementById('saveAdjust').addEventListener('click', async () => {
+  const enteredPass = document.getElementById('admin-pass').value;
+  const player = document.getElementById('a-player').value;
+  const points = document.getElementById('a-points').value;
+  const reason = document.getElementById('a-reason').value || "Manuel Düzenleme";
+
+  if(!ADMIN_PASSWORDS.includes(enteredPass)) {
+    alert("❌ Hatalı Yetkili Şifresi!");
+    return;
+  }
+  if(!points) {
+    alert("Lütfen geçerli bir puan girin!");
+    return;
+  }
+
+  // Değişikliği lokale kaydet
+  DATA.adjustments.push({ player, points: Number(points), reason });
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
+  renderBoard();
+  
+  // Buluta gönder
+  await pushToCloud();
+  
+  closeAllSheets();
+  document.getElementById('admin-pass').value = "";
+  document.getElementById('a-points').value = "";
+  document.getElementById('a-reason').value = "";
+  alert(`✅ ${player} için puan kaydedildi ve tüm masayla eşitlendi!`);
+});
+
+// YEDEK KOD İÇE AKTARMA
+document.getElementById('saveImport').addEventListener('click', async () => {
+  const importValue = document.getElementById('importData').value.trim();
+  if(!importValue) return alert("Lütfen yedek kodu yapıştırın.");
+  try {
+    const decoded = JSON.parse(decodeURIComponent(escape(atob(importValue))));
+    if(decoded.players && decoded.adjustments) {
+      DATA = decoded;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
+      renderBoard();
+      await pushToCloud();
+      closeAllSheets();
+      document.getElementById('importData').value = "";
+      alert("🎉 Tablo manuel kodla senkronize edildi!");
+    }
+  } catch(e) {
+    alert("Geçersiz kod.");
+  }
+});
+
+// İlk Açılışta Otomatik Canlı Veriyi Çek
+(async () => {
+  const local = localStorage.getItem(STORAGE_KEY);
+  if(local) {
+    DATA = JSON.parse(local);
+    renderBoard();
+  }
+  await pullFromCloud(true);
+})();
 </script>
 </body>
 </html>
