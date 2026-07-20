@@ -142,7 +142,7 @@
     <div class="eyebrow">Temmuz Ayı Meclis Kararları</div>
     <h1>Krallık Liderlik Tablosu</h1>
     <div style="font-size:13px; color:var(--brass-bright); margin-top:6px;" id="leaderLine">Yükleniyor…</div>
-    <div class="status-text" id="syncStatus">JSONBin.io Bağlantısı Hazır</div>
+    <div class="status-text" id="syncStatus">🔄 Canlı Senkronizasyon Aktif</div>
     
     <button class="giant-update-btn" id="quickUpdateBtn">
       ⚡ TABLOYU GÜNCELLE VE EŞİTLE ⚡
@@ -162,7 +162,7 @@
       </div>
       <div class="kanun-madde">
         <span class="kanun-title">Madde 2: Hatalı Açma ve Sahte Okey Cezaları</span>
-        Masaya yanlış taş açan, seri/per hesaplamasını hatalı yapan veya sahte okeyi per kurallarına aykırı şekilde yanlış yere yerleştirip oyunu bozan oyuncu, o el hak iddia edemez ve masadaki diğer tüm oyuncuların hanesine -15 puan ceza puanı olarak raportör tarafından doğrudan işlenir.
+        Masaya yanlış taş açan, seri/per hesaplamasını hatalı yapan veya sahte okeyي per kurallarına aykırı şekilde yanlış yere yerleştirip oyunu bozan oyuncu, o el hak iddia edemez ve masadaki diğer tüm oyuncuların hanesine -15 puan ceza puanı olarak raportör tarafından doğrudan işlenir.
       </div>
       <div class="kanun-madde">
         <span class="kanun-title">Madde 3: Son 4 Sıra ve Baklava Yükümlülüğü</span>
@@ -262,10 +262,9 @@
 </div>
 
 <script>
-// JSONBin.io Bilgileri
+// JSONBin.io Bilgileri (Tekil Master Key ile Doğrudan Erişim)
 const BIN_ID = "66a3ef18ad19ca34f8910b85"; 
 const MASTER_KEY = "$2a$10$gwAz3iL7ucp6uKXjXnmk6e/iQGuvLgyhcfT66MunbCC1CE54LqmqS";
-const ACCESS_KEY = "$2a$10$V3v5rzz/JCz9AWcquzhIJe3qa6FIgjoQMAR5KCoYYhFK9NuihCZlW";
 const BIN_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
 
 const APP_ID = "okey_kralligi_temmuz_2026"; 
@@ -273,7 +272,7 @@ const ADMIN_PASSWORDS = ["ugur123", "can123"];
 const DEFAULT_PLAYERS = ["Bahattin Konut","Mehmet Can Zile","Ahmet Ziya Bitim","Deniz Kuyluk","Seçkin Yılmaz","Rüştü Korkmaz","Recep Koca","Gökhan Toprak","Veysi Temel","Hakan Göktaş","Murat Gül","Aytek Evren","Fatih Öztekin","Ahmet Erkam Ketmen","Uğur Ede"];
 
 let DATA = { players: [...DEFAULT_PLAYERS], adjustments: [], entries: [] };
-const STORAGE_KEY = "okey_krallik_v7";
+const STORAGE_KEY = "okey_krallik_v8";
 
 // Akordeon Kontrolü
 document.getElementById('toggleKanun').addEventListener('click', () => {
@@ -322,18 +321,15 @@ function updateSlots() {
 document.getElementById('m-size').addEventListener('change', updateSlots);
 document.getElementById('m-day').addEventListener('change', updateSlots);
 
-// JSONBIN.IO: Tamamen Güvenli ve Önbelleksiz Veri Çekme
+// KESİN SENKRONİZASYON: Buluttan Taze Veri Çekme
 async function pullFromCloud(silent = false) {
   const statusEl = document.getElementById('syncStatus');
-  if(!silent) statusEl.innerHTML = "⏳ JSONBin'den en taze veriler çekiliyor...";
+  if(!silent) statusEl.innerHTML = "⏳ Buluttan en taze veriler çekiliyor...";
   try {
-    const res = await fetch(`${BIN_URL}/latest?_t=${Date.now()}`, {
+    const res = await fetch(`${BIN_URL}/latest?nocache=${Date.now()}`, {
       method: 'GET',
       headers: {
-        'X-Master-Key': MASTER_KEY,
-        'X-Access-Key': ACCESS_KEY,
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache'
+        'X-Master-Key': MASTER_KEY
       }
     });
     if(res.ok) {
@@ -345,62 +341,48 @@ async function pullFromCloud(silent = false) {
         if(!DATA.adjustments) DATA.adjustments = [];
         localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
         renderBoard();
-        statusEl.innerHTML = "✅ Tablo JSONBin ile Tamamen Senkronize";
+        statusEl.innerHTML = "🟢 Canlı Senkronizasyon Aktif (Anlık Güncelleniyor)";
         return true;
       }
     }
   } catch(e) {
-    statusEl.innerHTML = "⚠️ İnternet hatası! Lokal veriler gösteriliyor.";
+    if(!silent) statusEl.innerHTML = "⚠️ İnternet bağlantı sorunu!";
   }
-  const local = localStorage.getItem(STORAGE_KEY);
-  if(local) {
-    DATA = JSON.parse(local);
-    if(!DATA.entries) DATA.entries = [];
-  }
-  renderBoard();
   return false;
 }
 
-// JSONBIN.IO: Kapsamlı ve Kesin Veri Gönderme (PUT)
+// KESİN GÖNDERME: Buluta Kaydetme (PUT)
 async function pushToCloud() {
   const statusEl = document.getElementById('syncStatus');
-  statusEl.innerHTML = "📤 Puanlar JSONBin bulutuna yükleniyor...";
+  statusEl.innerHTML = "📤 Puanlar buluta işleniyor...";
   try {
-    // 1. Önce buluttaki son güncel tam şemayı çek
     let fullBin = {};
-    const getRes = await fetch(`${BIN_URL}/latest?_t=${Date.now()}`, {
+    const getRes = await fetch(`${BIN_URL}/latest?nocache=${Date.now()}`, {
       method: 'GET',
-      headers: {
-        'X-Master-Key': MASTER_KEY,
-        'X-Access-Key': ACCESS_KEY,
-        'Cache-Control': 'no-cache'
-      }
+      headers: { 'X-Master-Key': MASTER_KEY }
     });
     if(getRes.ok) {
       const resp = await getRes.json();
       fullBin = resp.record || resp;
     }
     
-    // 2. Kendi uygulamamıza ait veriyi en güncel hâliyle ekle
     fullBin[APP_ID] = DATA;
 
-    // 3. Buluta gönder
     const res = await fetch(BIN_URL, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'X-Master-Key': MASTER_KEY,
-        'X-Access-Key': ACCESS_KEY
+        'X-Master-Key': MASTER_KEY
       },
       body: JSON.stringify(fullBin)
     });
     
     if(res.ok) {
-      statusEl.innerHTML = "✅ Buluta Kaydedildi ve Eşitlendi!";
+      statusEl.innerHTML = "✅ Başarıyla Kaydedildi ve Eşitlendi!";
       return true;
     }
   } catch(e) {
-    alert("Buluta bağlanırken hata oluştu. Veriler telefonunuza kaydedildi.");
+    alert("Buluta bağlanırken hata oluştu.");
   }
   return false;
 }
@@ -534,7 +516,7 @@ document.getElementById('openBackup').addEventListener('click', () => openSheet(
 
 document.getElementById('quickUpdateBtn').addEventListener('click', async () => {
   await pullFromCloud(false);
-  alert("🎉 Tablo JSONBin bulutundaki en güncel verilerle senkronize edildi!");
+  alert("🎉 Tablo buluttaki en güncel verilerle senkronize edildi!");
 });
 
 document.getElementById('closeSheet').addEventListener('click', closeAllSheets);
@@ -574,7 +556,7 @@ document.getElementById('saveManualEntry').addEventListener('click', async () =>
   if(!DATA.entries) DATA.entries = [];
   DATA.entries.push({ dayType, tableSize: size, results });
 
-  statusEl.textContent = "⏳ JSONBin bulutuna yükleniyor...";
+  statusEl.textContent = "⏳ Buluta yükleniyor...";
   localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
   renderBoard();
 
@@ -617,7 +599,7 @@ document.getElementById('saveAdjust').addEventListener('click', async () => {
   document.getElementById('admin-pass').value = "";
   document.getElementById('a-points').value = "";
   document.getElementById('a-reason').value = "";
-  alert(`✅ ${player} için puan kaydedildi ve JSONBin ile tüm masayla eşitlendi!`);
+  alert(`✅ ${player} için puan kaydedildi ve masayla eşitlendi!`);
 });
 
 // YEDEK KOD İÇE AKTARMA
@@ -634,14 +616,14 @@ document.getElementById('saveImport').addEventListener('click', async () => {
       await pushToCloud();
       closeAllSheets();
       document.getElementById('importData').value = "";
-      alert("🎉 Tablo manuel kodla JSONBin üzerinden senkronize edildi!");
+      alert("🎉 Tablo manuel kodla senkronize edildi!");
     }
   } catch(e) {
     alert("Geçersiz kod.");
   }
 });
 
-// Sayfa Açılış Otomatik Yükleme
+// Sayfa Açılış Otomatik Yükleme & 6 saniyede bir Arka Planda Canlı Çekme Döngüsü
 (async () => {
   const local = localStorage.getItem(STORAGE_KEY);
   if(local) {
@@ -650,6 +632,14 @@ document.getElementById('saveImport').addEventListener('click', async () => {
     renderBoard();
   }
   await pullFromCloud(true);
+
+  // Arka Planda Otomatik Canlı Güncelleme Döngüsü (Her 6 saniyede bir diğerleri için güncel tutar)
+  setInterval(async () => {
+    // Eğer kullanıcı aktif olarak panel açıp yazı yazmıyorsa arka planda taze veriyi çek
+    if(!overlay.classList.contains('show')) {
+      await pullFromCloud(true);
+    }
+  }, 6000);
 })();
 </script>
 </body>
