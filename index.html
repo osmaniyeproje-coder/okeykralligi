@@ -263,7 +263,7 @@
 
 <script>
 const APP_ID = "okey_kralligi_temmuz_2026"; 
-const BIN_URL = const BIN_URL = `https://api.npoint.io/0ba03ba4cc30e9d6d376?t=` + new Date().getTime();
+const BIN_URL = `https://api.npoint.io/0ba03ba4cc30e9d6d376`; 
 
 const ADMIN_PASSWORDS = ["ugur123", "can123"];
 const DEFAULT_PLAYERS = ["Bahattin Konut","Mehmet Can Zile","Ahmet Ziya Bitim","Deniz Kuyluk","Seçkin Yılmaz","Rüştü Korkmaz","Recep Koca","Gökhan Toprak","Veysi Temel","Hakan Göktaş","Murat Gül","Aytek Evren","Fatih Öztekin","Ahmet Erkam Ketmen","Uğur Ede"];
@@ -323,32 +323,18 @@ document.getElementById('m-day').addEventListener('change', updateSlots);
 // BULUTTAN VERİ ÇEKME
 async function pullFromCloud(silent = false) {
   const statusEl = document.getElementById('syncStatus');
-  if(!silent) statusEl.innerHTML = "⏳ Buluttan güncel veriler çekiliyor...";
+  if(!silent) statusEl.innerHTML = "⏳ Buluttan veriler çekiliyor...";
   try {
-    // Cache'lenmeyi önlemek için sonuna zaman damgası ekliyoruz
-    const res = await fetch(`https://api.npoint.io/0ba03ba4cc30e9d6d376?cache_buster=` + Date.now());
+    const res = await fetch(BIN_URL);
     if(res.ok) {
       const cloudData = await res.json();
       if(cloudData && cloudData[APP_ID]) {
         DATA = cloudData[APP_ID];
-        if(!DATA.entries) DATA.entries = [];
-        if(!DATA.adjustments) DATA.adjustments = [];
+        if(!DATA.entries) DATA.entries = []; // Güvenlik önlemi
         localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
         renderBoard();
-        statusEl.innerHTML = "✅ Tablo Güncel ve Eşitlendi";
+        statusEl.innerHTML = "✅ Tablo Tamamen Güncel (Canlı)";
         return true;
-      }
-    }
-  } catch(e) {
-    statusEl.innerHTML = "⚠️ İnternet yok, yerel veriler gösteriliyor.";
-  }
-  const local = localStorage.getItem(STORAGE_KEY);
-  if(local) {
-    DATA = JSON.parse(local);
-    renderBoard();
-  }
-  return false;
-}
       }
     }
   } catch(e) {
