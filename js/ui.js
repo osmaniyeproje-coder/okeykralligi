@@ -32,3 +32,8 @@ const UI = {
     }
 
 };
+renderHistory() {
+
+    History.render();
+
+}
