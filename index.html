@@ -6,7 +6,7 @@
 <title>Temmuz Ayı Krallığı — Liderlik Tablosu</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2 family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --felt-deep:#0e2622;
@@ -36,7 +36,6 @@
   .eyebrow{ font-family:'JetBrains Mono', monospace; letter-spacing:.2em; text-transform:uppercase; font-size:10px; color:var(--brass-bright); margin-bottom:6px; }
   .ferman h1{ font-family:'Fraunces', serif; font-weight:700; font-size:26px; color:var(--ivory); margin:0; }
   
-  /* DEASA VE DİKKAT ÇEKİCİ GÜNCELLEME BUTONU */
   .giant-update-btn {
     width: 100%;
     background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
@@ -105,7 +104,6 @@
   .tile-name .n{ font-weight:700; font-size:15px; }
   .tile-points{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:18px; margin-left:auto; }
   
-  /* GEÇMİŞ LİSTESİ */
   .history-section { margin-top: 15px; max-height: 200px; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 8px; padding: 12px; border: 1px solid var(--line); }
   .history-item { font-size: 13px; padding: 8px 0; border-bottom: 1px solid rgba(241,233,216,0.05); color: var(--ivory-dim); display: flex; justify-content: space-between; gap: 10px; }
   .history-item:last-child { border: none; }
@@ -113,9 +111,9 @@
   .hist-pts.pos { color: #5af78e; }
   .hist-pts.neg { color: #ff5c5c; }
 
-  /* PANEL ALT BUTONLARI */
+  /* ALT BUTONLAR */
   .action-buttons { position:fixed; left:16px; right:16px; bottom:16px; display:flex; gap:8px; z-index:40; }
-  .fab{ flex:1; background:var(--felt-light); color:var(--ivory); border:1px solid var(--brass); border-radius:12px; padding:16px; font-weight:700; font-size:14px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); cursor: pointer; }
+  .fab{ flex:1; background:var(--felt-light); color:var(--ivory); border:1px solid var(--brass); border-radius:12px; padding:16px; font-weight:700; font-size:13px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); cursor: pointer; text-align: center; }
   .fab-main { background: var(--wine-bright); border: none; }
 
   .overlay{ position:fixed; inset:0; background:rgba(6,14,12,0.75); z-index:50; display:none; backdrop-filter: blur(4px); }
@@ -130,6 +128,11 @@
   .btn{ width:100%; padding:15px; border-radius:10px; border:none; font-weight:700; font-size:15px; margin-top:16px; cursor:pointer;}
   .btn-primary{ background:var(--brass); color:var(--felt-deep); }
   .status-text { text-align: center; font-size: 12px; color: var(--brass-bright); margin-bottom: 10px; font-family: 'JetBrains Mono'; }
+  
+  /* El Kayıt Slotları Stili */
+  .slot-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; background: rgba(255,255,255,0.03); padding: 8px; border-radius: 8px; border: 1px solid var(--line); }
+  .slot-row select { flex: 2; margin: 0; }
+  .slot-row span { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 14px; color: var(--brass-bright); width: 45px; text-align: center; }
 </style>
 </head>
 <body>
@@ -141,13 +144,12 @@
     <div style="font-size:13px; color:var(--brass-bright); margin-top:6px;" id="leaderLine">Yükleniyor…</div>
     <div class="status-text" id="syncStatus">Bulut Bağlantısı Hazır</div>
     
-    <!-- YENİ DEVASA CANLI GÜNCELLEME BUTONU -->
     <button class="giant-update-btn" id="quickUpdateBtn">
       ⚡ TABLOYU GÜNCELLE VE EŞİTLE ⚡
     </button>
   </div>
 
-  <!-- TAM METİN KANUNLAR -->
+  <!-- KANUNLAR -->
   <div class="kanunlar-container">
     <div class="kanunlar-header" id="toggleKanun">
       <span>📜 Krallık Resmi Kanunları (Tam Metin)</span>
@@ -177,35 +179,64 @@
 </div>
 
 <div class="action-buttons">
-  <button class="fab" id="openBackup">📦 Manuel Yedek</button>
-  <button class="fab fab-main" id="openFab">✛ Hızlı Puan/Ceza Ekle</button>
+  <button class="fab" id="openManual">⚡ El (JSON) Ekle</button>
+  <button class="fab" id="openBackup">📦 Yedek</button>
+  <button class="fab fab-main" id="openFab">✛ Ceza/Ek Puan</button>
 </div>
 
 <div class="overlay" id="overlay"></div>
 
-<!-- OYUNCU DETAY VE PUAN GİRİŞ PANELİ -->
+<!-- 1. PANEL: MANUEL OYUN / EL KAYDI (JSON GİRİŞİ) -->
+<div class="sheet" id="manualSheet">
+  <div class="sheet-inner">
+    <button class="close-x" id="closeManualSheet">✕</button>
+    <h3 style="color:var(--ivory); font-family:'Fraunces'; margin:0 0 10px 0;">Oyun Eli Puan Dağılımı</h3>
+    
+    <label>Yetkili Şifresi</label>
+    <input type="password" id="m-pass" placeholder="Uğur veya Can şifresi">
+
+    <label>Oynanan Gün Tipi</label>
+    <select id="m-day">
+      <option value="pazartesi">Pazartesi Günü (Özel Katsayı: 4, 2, -2, -4)</option>
+      <option value="diger">Diğer Günler (Standart Katsayı: 2, 1, -1, -2)</option>
+    </select>
+
+    <label>Masa Boyutu (Oyuncu Sayısı)</label>
+    <select id="m-size">
+      <option value="4">4 Kişilik Masa</option>
+      <option value="3">3 Kişilik Masa</option>
+    </select>
+
+    <label>Oyuncu Sıralaması (1. den Sonuncuya Doğru Seçin)</label>
+    <div id="slotsWrap" style="margin-top: 8px;"></div>
+
+    <button class="btn btn-primary" id="saveManualEntry">Eli Kaydet ve Buluta Eşitle</button>
+    <div class="status-text" id="manualStatus" style="margin-top:10px;"></div>
+  </div>
+</div>
+
+<!-- 2. PANEL: OYUNCU DETAY VE CEZA/EK PUAN PANELİ -->
 <div class="sheet" id="sheet">
   <div class="sheet-inner">
     <button class="close-x" id="closeSheet">✕</button>
-    <h3 id="sheetTitle" style="color:var(--ivory); font-family:'Fraunces'; margin:0 0 10px 0;">Puan / Ceza Yönetimi</h3>
+    <h3 style="color:var(--ivory); font-family:'Fraunces'; margin:0 0 10px 0;">Özel Puan / Ceza Yönetimi</h3>
 
     <div class="panel active">
-      <label>Yetkili Şifresi (Gerekli)</label>
+      <label>Yetkili Şifresi</label>
       <input type="password" id="admin-pass" placeholder="Uğur veya Can şifresi">
       
       <label>Seçili Oyuncu</label>
       <select id="a-player"></select>
       
-      <label>Puan Değişimi (+ veya - değer girin)</label>
-      <input type="number" id="a-points" placeholder="Örn: 20, 30 veya -15">
+      <label>Puan Değişimi (+ veya - değer)</label>
+      <input type="number" id="a-points" placeholder="Örn: 20 veya -15">
       
-      <label>Kanun Maddesi / Ceza Gerekçesi</label>
+      <label>Gerekçe / Kanun Maddesi</label>
       <input type="text" id="a-reason" placeholder="Örn: Madde 1 - Okey Atarak Bitme">
       
-      <button class="btn btn-primary" id="saveAdjust">Puanı Buluta Gönder ve Kaydet</button>
+      <button class="btn btn-primary" id="saveAdjust">Puanı Buluta Gönder</button>
       
-      <!-- GEÇMİŞ CEZA / PUAN ALANI -->
-      <h4 style="color:var(--brass-bright); margin:20px 0 5px 0; font-size:13px; font-family:'JetBrains Mono'">📜 OYUNCUNUN TÜM GEÇMİŞİ</h4>
+      <h4 style="color:var(--brass-bright); margin:20px 0 5px 0; font-size:13px; font-family:'JetBrains Mono'">📜 OYUNCUNUN GEÇMİŞİ</h4>
       <div class="history-section" id="playerHistory">
         <div style="color:var(--ivory-dim); font-size:12px; text-align:center; padding:10px;">Yükleniyor...</div>
       </div>
@@ -213,12 +244,12 @@
   </div>
 </div>
 
-<!-- MANUEL YEDEKLEME PANELİ (BULUT ÇÖKERSE DİYE ÖNLEM) -->
+<!-- 3. PANEL: MANUEL YEDEKLEME -->
 <div class="sheet" id="backupSheet">
   <div class="sheet-inner">
     <button class="close-x" id="closeBackupSheet">✕</button>
     <h3 style="color:var(--ivory); font-family:'Fraunces'; margin: 0 0 10px 0;">Manuel Yedek Paneli</h3>
-    <p style="color:var(--ivory-dim); font-size:12px; line-height:1.4;">Bulut sistemi puanları otomatik eşitler. Ancak internet olmaması durumuna karşı manuel yedek kodunuz aşağıdadır.</p>
+    <p style="color:var(--ivory-dim); font-size:12px; line-height:1.4;">Bulut sistemine ek olarak ham JSON verinizi buradan kopyalayabilir veya zorla içe aktarabilirsiniz.</p>
     
     <label>Mevcut Ham Veri Kodu</label>
     <input type="text" id="exportData" readonly onclick="this.select();">
@@ -231,14 +262,15 @@
 </div>
 
 <script>
-// BULUT DEPOLAMA AYARI
-const APP_ID = "okey_kralligi_temmuz_2026"; // Grubunuza özel benzersiz ID
-const BIN_URL = `https://api.npoint.io/0ba03ba4cc30e9d6d376`; // Güvenli ortak ücretsiz bulut havuzu
+const APP_ID = "okey_kralligi_temmuz_2026"; 
+const BIN_URL = `https://api.npoint.io/0ba03ba4cc30e9d6d376`; 
 
 const ADMIN_PASSWORDS = ["ugur123", "can123"];
 const DEFAULT_PLAYERS = ["Bahattin Konut","Mehmet Can Zile","Ahmet Ziya Bitim","Deniz Kuyluk","Seçkin Yılmaz","Rüştü Korkmaz","Recep Koca","Gökhan Toprak","Veysi Temel","Hakan Göktaş","Murat Gül","Aytek Evren","Fatih Öztekin","Ahmet Erkam Ketmen","Uğur Ede"];
-let DATA = { players: [...DEFAULT_PLAYERS], adjustments: [] };
-const STORAGE_KEY = "okey_krallik_v4";
+
+// DATA objesi hem eski manuel adjustments listesini hem de yeni "entries" (el maç kayıtlarını) barındırır.
+let DATA = { players: [...DEFAULT_PLAYERS], adjustments: [], entries: [] };
+const STORAGE_KEY = "okey_krallik_v5";
 
 // Akordeon Kontrolü
 document.getElementById('toggleKanun').addEventListener('click', () => {
@@ -248,7 +280,47 @@ document.getElementById('toggleKanun').addEventListener('click', () => {
   arrow.innerHTML = content.classList.contains('open') ? "▲" : "▼";
 });
 
-// BULUTTAN EN GÜNCEL VERİLERİ ÇEKME FONKSİYONU
+// Puanlama Katsayı Tablosu Mantığı
+function pointsTable(dayType, size) {
+  if (size === 4) {
+    return dayType === 'pazartesi' ? [4, 2, -2, -4] : [2, 1, -1, -2];
+  } else {
+    return dayType === 'pazartesi' ? [4, 0, -4] : [2, 0, -2];
+  }
+}
+
+// El kayıt slotlarını dinamik oluşturma
+function updateSlots() {
+  const size = parseInt(document.getElementById('m-size').value);
+  const dayType = document.getElementById('m-day').value;
+  const pts = pointsTable(dayType, size);
+  const wrap = document.getElementById('slotsWrap');
+  wrap.innerHTML = "";
+
+  for(let i=0; i<size; i++) {
+    const row = document.createElement('div');
+    row.className = 'slot-row';
+    
+    const select = document.createElement('select');
+    select.className = 'p-select';
+    select.innerHTML = DATA.players.map(p => `<option value="${p}">${p}</option>`).join('');
+    // Varsayılan olarak farklı kişileri seçili getirelim
+    select.selectedIndex = i % DATA.players.length;
+
+    const span = document.createElement('span');
+    span.textContent = (pts[i] > 0 ? "+" : "") + pts[i] + " p";
+    span.style.color = pts[i] > 0 ? "#5af78e" : (pts[i] < 0 ? "#ff5c5c" : "var(--ivory-dim)");
+
+    row.appendChild(select);
+    row.appendChild(span);
+    wrap.appendChild(row);
+  }
+}
+
+document.getElementById('m-size').addEventListener('change', updateSlots);
+document.getElementById('m-day').addEventListener('change', updateSlots);
+
+// BULUTTAN VERİ ÇEKME
 async function pullFromCloud(silent = false) {
   const statusEl = document.getElementById('syncStatus');
   if(!silent) statusEl.innerHTML = "⏳ Buluttan veriler çekiliyor...";
@@ -258,6 +330,7 @@ async function pullFromCloud(silent = false) {
       const cloudData = await res.json();
       if(cloudData && cloudData[APP_ID]) {
         DATA = cloudData[APP_ID];
+        if(!DATA.entries) DATA.entries = []; // Güvenlik önlemi
         localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
         renderBoard();
         statusEl.innerHTML = "✅ Tablo Tamamen Güncel (Canlı)";
@@ -265,22 +338,22 @@ async function pullFromCloud(silent = false) {
       }
     }
   } catch(e) {
-    console.error("Bulut çekme hatası:", e);
     statusEl.innerHTML = "⚠️ İnternet hatası! Lokal veriler gösteriliyor.";
   }
-  // Bulut başarısız olursa lokale dön
   const local = localStorage.getItem(STORAGE_KEY);
-  if(local) DATA = JSON.parse(local);
+  if(local) {
+    DATA = JSON.parse(local);
+    if(!DATA.entries) DATA.entries = [];
+  }
   renderBoard();
   return false;
 }
 
-// BULUTA YENİ VERİLERİ YAZMA FONKSİYONU
+// BULUTA VERİ YAZMA
 async function pushToCloud() {
   const statusEl = document.getElementById('syncStatus');
   statusEl.innerHTML = "📤 Puanlar buluta yükleniyor...";
   try {
-    // Önce mevcut tüm bulut havuzunu alalım ki diğer dataları bozmayalım
     let fullBin = {};
     try {
       const getRes = await fetch(BIN_URL);
@@ -290,7 +363,7 @@ async function pushToCloud() {
     fullBin[APP_ID] = DATA;
 
     const res = await fetch(BIN_URL, {
-      method: 'POST', // npoint POST ile üzerine yazar
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(fullBin)
     });
@@ -299,17 +372,32 @@ async function pushToCloud() {
       return true;
     }
   } catch(e) {
-    alert("Buluta bağlanırken hata oluştu. Puan telefonunuza kaydedildi ancak diğer cihazlara gitmedi. İnterneti kontrol edin.");
+    alert("Buluta bağlanırken hata oluştu. Veriler telefonunuza kaydedildi.");
   }
   return false;
 }
 
+// TOPLAM PUANLARI HESAPLAMA (Adjustments + Entries)
 function computeTotals(){
   const totals = {};
   DATA.players.forEach(p => totals[p] = 0);
+  
+  // 1. Ekstra ceza / ek puanlar
   DATA.adjustments.forEach(a => {
     if(totals.hasOwnProperty(a.player)) totals[a.player] += Number(a.points);
   });
+
+  // 2. JSON El / Maç kayıtlarından gelen puanlar
+  if(DATA.entries && Array.isArray(DATA.entries)) {
+    DATA.entries.forEach(entry => {
+      if(entry.results) {
+        entry.results.forEach(r => {
+          if(totals.hasOwnProperty(r.player)) totals[r.player] += Number(r.points);
+        });
+      }
+    });
+  }
+
   return totals;
 }
 
@@ -330,12 +418,12 @@ function renderBoard(){
 
     let badgeIcon = "";
     if (i === 0) badgeIcon = " 👑";
-    if (i >= rows.length - 4) badgeIcon = " %F0%9F%A5%9E"; 
+    if (i >= rows.length - 4) badgeIcon = " 🥐"; 
     if (r.name === "Ahmet Erkam Ketmen") badgeIcon += " 🥜"; 
 
     div.innerHTML = `
       <div class="rank-badge">${i+1}</div>
-      <div class="tile-name"><div class="n">${r.name}${decodeURIComponent(badgeIcon)}</div></div>
+      <div class="tile-name"><div class="n">${r.name}${badgeIcon}</div></div>
       <div class="tile-points">${r.total}</div>
     `;
 
@@ -355,14 +443,33 @@ function renderBoard(){
 
 function showPlayerHistory(playerName) {
   const historyContainer = document.getElementById('playerHistory');
-  const filtered = DATA.adjustments.filter(a => a.player === playerName);
+  const filteredAdj = DATA.adjustments.filter(a => a.player === playerName);
   
-  if(filtered.length === 0) {
-    historyContainer.innerHTML = `<div style="color:var(--ivory-dim); font-size:12px; text-align:center; padding:10px;">Henüz puan/ceza geçmişi yok.</div>`;
+  // Bu oyuncunun katıldığı el maçlarını bulalım
+  const filteredEntries = [];
+  if(DATA.entries) {
+    DATA.entries.forEach((e, idx) => {
+      if(e.results) {
+        e.results.forEach(r => {
+          if(r.player === playerName) {
+            filteredEntries.push({
+              reason: `Masa Maçı (#${idx+1}) - ${e.dayType === 'pazartesi' ? 'Pazartesi' : 'Normal Gün'}`,
+              points: r.points
+            });
+          }
+        });
+      }
+    });
+  }
+
+  const combined = [...filteredAdj, ...filteredEntries];
+
+  if(combined.length === 0) {
+    historyContainer.innerHTML = `<div style="color:var(--ivory-dim); font-size:12px; text-align:center; padding:10px;">Henüz puan geçmişi yok.</div>`;
     return;
   }
   
-  historyContainer.innerHTML = [...filtered].reverse().map(a => {
+  historyContainer.innerHTML = combined.map(a => {
     const isPos = Number(a.points) >= 0;
     return `
       <div class="history-item">
@@ -375,6 +482,7 @@ function showPlayerHistory(playerName) {
 
 const overlay = document.getElementById('overlay');
 const sheet = document.getElementById('sheet');
+const manualSheet = document.getElementById('manualSheet');
 const backupSheet = document.getElementById('backupSheet');
 
 function openSheet(targetId){
@@ -384,6 +492,7 @@ function openSheet(targetId){
 function closeAllSheets(){
   overlay.classList.remove('show');
   sheet.classList.remove('show');
+  manualSheet.classList.remove('show');
   backupSheet.classList.remove('show');
 }
 
@@ -392,9 +501,12 @@ document.getElementById('openFab').addEventListener('click', () => {
   if(DATA.players.length > 0) showPlayerHistory(document.getElementById('a-player').value);
   openSheet('sheet');
 });
+document.getElementById('openManual').addEventListener('click', () => {
+  updateSlots();
+  openSheet('manualSheet');
+});
 document.getElementById('openBackup').addEventListener('click', () => openSheet('backupSheet'));
 
-// CANLI BÜYÜK GÜNCELLEME BUTONU AKSİYONU
 document.getElementById('quickUpdateBtn').addEventListener('click', async () => {
   const success = await pullFromCloud();
   if(success) {
@@ -403,6 +515,7 @@ document.getElementById('quickUpdateBtn').addEventListener('click', async () => 
 });
 
 document.getElementById('closeSheet').addEventListener('click', closeAllSheets);
+document.getElementById('closeManualSheet').addEventListener('click', closeAllSheets);
 document.getElementById('closeBackupSheet').addEventListener('click', closeAllSheets);
 overlay.addEventListener('click', closeAllSheets);
 
@@ -414,7 +527,48 @@ function fillSelect(){
   }
 }
 
-// PUAN YAZMA VE BULUTA GÖNDERME
+// 1. MANUEL EL / MAÇ JSON KAYDI EKLEME
+document.getElementById('saveManualEntry').addEventListener('click', async () => {
+  const pass = document.getElementById('m-pass').value;
+  const statusEl = document.getElementById('manualStatus');
+
+  if(!ADMIN_PASSWORDS.includes(pass)) {
+    statusEl.textContent = "❌ Hatalı Yetkili Şifresi!";
+    return;
+  }
+
+  const size = parseInt(document.getElementById('m-size').value);
+  const dayType = document.getElementById('m-day').value;
+  const pts = pointsTable(dayType, size);
+  
+  const selects = document.querySelectorAll('.p-select');
+  const results = [];
+  
+  selects.forEach((sel, idx) => {
+    results.push({ player: sel.value, points: pts[idx] });
+  });
+
+  if(!DATA.entries) DATA.entries = [];
+  DATA.entries.push({ dayType, tableSize: size, results });
+
+  statusEl.textContent = "⏳ Buluta yükleniyor...";
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
+  renderBoard();
+
+  const success = await pushToCloud();
+  if(success) {
+    statusEl.textContent = "✅ Maç eli başarıyla kaydedildi!";
+    setTimeout(() => {
+      closeAllSheets();
+      statusEl.textContent = "";
+      document.getElementById('m-pass').value = "";
+    }, 1200);
+  } else {
+    statusEl.textContent = "⚠️ Telefona kaydedildi ancak buluta gönderilemedi.";
+  }
+});
+
+// 2. ÖZEL CEZA / EK PUAN KAYDI
 document.getElementById('saveAdjust').addEventListener('click', async () => {
   const enteredPass = document.getElementById('admin-pass').value;
   const player = document.getElementById('a-player').value;
@@ -430,12 +584,10 @@ document.getElementById('saveAdjust').addEventListener('click', async () => {
     return;
   }
 
-  // Değişikliği lokale kaydet
   DATA.adjustments.push({ player, points: Number(points), reason });
   localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
   renderBoard();
   
-  // Buluta gönder
   await pushToCloud();
   
   closeAllSheets();
@@ -451,8 +603,9 @@ document.getElementById('saveImport').addEventListener('click', async () => {
   if(!importValue) return alert("Lütfen yedek kodu yapıştırın.");
   try {
     const decoded = JSON.parse(decodeURIComponent(escape(atob(importValue))));
-    if(decoded.players && decoded.adjustments) {
+    if(decoded.players) {
       DATA = decoded;
+      if(!DATA.entries) DATA.entries = [];
       localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
       renderBoard();
       await pushToCloud();
@@ -465,11 +618,12 @@ document.getElementById('saveImport').addEventListener('click', async () => {
   }
 });
 
-// İlk Açılışta Otomatik Canlı Veriyi Çek
+// Sayfa Açılış Otomatik Yükleme
 (async () => {
   const local = localStorage.getItem(STORAGE_KEY);
   if(local) {
     DATA = JSON.parse(local);
+    if(!DATA.entries) DATA.entries = [];
     renderBoard();
   }
   await pullFromCloud(true);
