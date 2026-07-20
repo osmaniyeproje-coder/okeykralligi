@@ -13,6 +13,7 @@ body{
 }
 
 .header{
+    box-shadow: 0 2px 12px rgba(0,0,0,.35);
     background:#1c222b;
     padding:20px;
     text-align:center;
@@ -72,11 +73,15 @@ main{
 }
 
 .card{
-    background:#1d242d;
-    border-radius:15px;
-    padding:18px;
-    margin-top:15px;
-    box-shadow:0 0 12px rgba(0,0,0,.25);
+
+background:#1d242d;
+border-radius:16px;
+padding:18px;
+margin-top:15px;
+box-shadow:0 8px 20px rgba(0,0,0,.25);
+border:1px solid rgba(255,255,255,.05);
+
+}
 }
 
 .welcomeCard{
@@ -245,6 +250,109 @@ justify-content:center;
 .bottomBar{
 
 display:none;
+    .page.active{
+    display:block;
+    animation:fade .35s ease;
+}
+
+@keyframes fade{
+
+from{
+
+opacity:0;
+transform:translateY(10px);
+
+}
+
+to{
+
+opacity:1;
+transform:translateY(0);
+
+}.scoreItem{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+font-size:17px;
+
+}
+
+.scoreRank{
+
+font-size:22px;
+
+margin-right:10px;
+
+}
+
+.scoreName{
+
+flex:1;
+
+font-weight:600;
+
+}
+
+.scorePoint{
+
+font-weight:bold;
+
+color:#f5c542;
+
+font-size:20px;
+
+}input{
+
+width:100%;
+padding:15px;
+border:none;
+border-radius:12px;
+background:#2b3440;
+color:white;
+font-size:16px;
+margin-bottom:15px;
+
+}
+
+input:focus{
+
+outline:2px solid #f5c542;
+
+}.primaryButton{
+
+transition:.25s;
+
+}
+
+.primaryButton:hover{
+
+transform:translateY(-2px);
+
+}
+
+.primaryButton:active{
+
+transform:scale(.97);
+
+}.updateBox{
+
+margin-top:20px;
+
+padding:15px;
+
+text-align:center;
+
+background:#1d242d;
+
+border-radius:14px;
+
+color:#bdbdbd;
+
+}
+
+}
 
 }
 
