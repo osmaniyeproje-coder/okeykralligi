@@ -1,9 +1,14 @@
 const UI = {
 
-    init() {
+ init(){
 
-        this.renderLeaderboard();
+this.renderLeaderboard();
 
+this.renderHistory();
+
+this.renderGamePlayers();
+
+}
     },
 
     renderLeaderboard() {
