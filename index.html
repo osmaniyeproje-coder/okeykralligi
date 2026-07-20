@@ -3,377 +3,128 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>👑 Okey Krallığı</title>
-
 <link rel="stylesheet" href="style.css">
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
 </head>
-
 <body>
 
 <header class="header">
-
-<div class="logo">
-
-👑 OKEY KRALLIĞI
-
-</div>
-
-<div class="month">
-
-Temmuz Ayı
-
-</div>
-
+<div class="logo">👑 OKEY KRALLIĞI</div>
+<div class="month">Temmuz Ayı</div>
 </header>
 
 <nav class="menu">
-
-<button class="menuBtn active" data-page="home">
-
-🏠
-<span>Anasayfa</span>
-
-</button>
-
-<button class="menuBtn" data-page="admin">
-
-🔐
-<span>Yönetici</span>
-
-</button>
-
-<button class="menuBtn" data-page="score">
-
-🏆
-<span>Puanlar</span>
-
-</button>
-
-<button class="menuBtn" data-page="history">
-
-📜
-<span>Geçmiş</span>
-
-</button>
-
-<button class="menuBtn" data-page="rules">
-
-📖
-<span>Kanunlar</span>
-
-</button>
-
+<button class="menuBtn active" data-page="home">🏠<span>Anasayfa</span></button>
+<button class="menuBtn" data-page="admin">🔐<span>Yönetici</span></button>
+<button class="menuBtn" data-page="score">🏆<span>Puanlar</span></button>
+<button class="menuBtn" data-page="history">📜<span>Geçmiş</span></button>
+<button class="menuBtn" data-page="rules">📖<span>Kanunlar</span></button>
 </nav>
 
 <main>
-
+<!-- Anasayfa -->
 <section id="home" class="page active">
-
 <div class="welcomeCard">
-
-<h2>
-
-Okey Krallığına Hoş Geldiniz
-
-</h2>
-
-<p>
-
-Bu uygulama Temmuz Krallığı puanlarını otomatik hesaplamak için hazırlanmıştır.
-
-</p>
-
+<h2>Okey Krallığına Hoş Geldiniz</h2>
+<p>Bu uygulama Temmuz Krallığı puanlarını otomatik hesaplamak için hazırlanmıştır.</p>
 </div>
-
-<button id="newGameBtn">
-
-🎮 Yeni Oyun Başlat
-
-</button>
-
-<button id="scoreBtn">
-
-🏆 Puan Durumu
-
-</button>
-
-<button id="historyBtn">
-
-📜 Oyun Geçmişi
-
-</button>
-
-<button id="rulesBtn">
-
-📖 Kanunları Oku
-
-</button>
-
-</div>
-
+<button id="newGameBtn" class="primaryButton" style="margin-bottom: 10px;">🎮 Yeni Oyun Başlat</button>
+<button id="scoreBtn" class="primaryButton" style="margin-bottom: 10px;">🏆 Puan Durumu</button>
+<button id="historyBtn" class="primaryButton" style="margin-bottom: 10px;">📜 Oyun Geçmişi</button>
+<button id="rulesBtn" class="primaryButton">📖 Kanunları Oku</button>
 </section>
 
+<!-- Yeni Oyun / Yönetici Alt Bölümü -->
 <section id="game" class="page">
-
-<h2>🎮 Yeni Oyun</h2>
-
+<h2>Yeni Oyun</h2>
 <div class="card">
-
-<label>Oyun Türü</label>
-
-<select id="gameType">
-    <option value="Pazartesi">Pazartesi</option>
-    <option value="Diğer Gün">Diğer Gün</option>
-</select>
-
-</div>
-
-<div class="card">
-
-<h3>Katılan Oyuncular</h3>
-
-<div id="gamePlayers"></div>
-
-</div>
-
-<button class="primaryButton" id="saveGame">
-
-💾 Oyunu Kaydet
-
-</button>
-
-</section>
-
-<h2>
-
-Yeni Oyun
-
-</h2>
-
-<div class="card">
-
-<label>
-
-Oyun Günü
-
-</label>
-
+<label>Oyun Günü</label>
 <select id="gameDay">
-
 <option>Pazartesi</option>
-
 <option>Salı</option>
-
 <option>Çarşamba</option>
-
 <option>Perşembe</option>
-
 <option>Cuma</option>
-
 <option>Cumartesi</option>
-
 <option>Pazar</option>
-
 </select>
-
 </div>
-
 <div class="card">
-
-<h3>
-
-Oyuncular
-
-</h3>
-
-<div id="playerList">
-
-<!-- script.js dolduracak -->
-
+<h3>Oyuncular</h3>
+<div id="playerList"></div>
 </div>
-
-</div>
-
-<button class="primaryButton" id="startGame">
-
-Oyunu Başlat
-
-</button>
-
+<button class="primaryButton" id="startGame">Oyunu Başlat</button>
 </section>
 
+<!-- Puan Durumu -->
 <section id="score" class="page">
-
-<h2>
-
-Puan Durumu
-
-</h2>
-
-<div id="scoreTable">
-
-Henüz veri yok.
-
-</div>
-
+<h2>Puan Durumu</h2>
+<div id="scoreTable">Henüz veri yok.</div>
 </section>
 
+<!-- Oyun Geçmişi -->
 <section id="history" class="page">
-
-<h2>
-
-Oyun Geçmişi
-
-</h2>
-
-<div id="historyList">
-
-Henüz oyun oynanmadı.
-
-</div>
-
+<h2>Oyun Geçmişi</h2>
+<div id="historyList">Henüz oyun oynanmadı.</div>
 </section>
+
+<!-- Yönetici Paneli -->
 <section id="admin" class="page">
-
 <h2>🔐 Yönetici Girişi</h2>
-
-<div class="card">
-
-<input
-type="password"
-id="adminPassword"
-placeholder="Şifre">
-
-<button
-class="primaryButton"
-id="loginBtn">
-
-Giriş Yap
-
-</button>
-
+<div class="card" id="loginCard">
+<input type="password" id="adminPassword" placeholder="Şifre">
+<button class="primaryButton" id="loginBtn">Giriş Yap</button>
 </div>
 
-<div
-id="adminPanel"
-style="display:none;">
-
+<div id="adminPanel" style="display:none;">
 <h3>Yönetici Paneli</h3>
+<button class="primaryButton" id="addGameBtn">➕ Oyun Sonucu Gir</button>
 
-<button
-class="primaryButton"
-id="addGameBtn">
 
-➕ Oyun Sonucu Gir
 <div id="gameForm" style="display:none; margin-top:20px;">
+<h3>Oyun Sonucu</h3>
+<div class="card">
+<label>🥇 Birinci</label>
+<select id="firstPlayer"></select>
 
-    <h3>Oyun Sonucu</h3>
+<label>🥈 İkinci</label>
+<select id="secondPlayer"></select>
 
-    <div class="card">
+<label>🥉 Üçüncü</label>
+<select id="thirdPlayer"></select>
 
-        <label>🥇 Birinci</label>
-        <select id="firstPlayer"></select>
+<label>4️⃣ Dördüncü</label>
+<select id="fourthPlayer"></select>
 
-        <label>🥈 İkinci</label>
-        <select id="secondPlayer"></select>
-
-        <label>🥉 Üçüncü</label>
-        <select id="thirdPlayer"></select>
-
-        <label>4️⃣ Dördüncü</label>
-        <select id="fourthPlayer"></select>
-
-        <button class="primaryButton" id="saveGameBtn">
-            💾 Sonucu Kaydet
-        </button>
-
-    </div>
-
+<button class="primaryButton" id="saveGameBtn" style="margin-top: 15px;">💾 Sonucu Kaydet</button>
 </div>
-</button>
-
-<button
-class="primaryButton"
-id="logoutBtn">
-
-🚪 Çıkış
-
-</button>
-
 </div>
 
+<button class="primaryButton" id="logoutBtn" style="margin-top: 15px; background-color: #d9534f;">🚪 Çıkış</button>
+</div>
 </section>
+
+<!-- Kanunlar -->
 <section id="rules" class="page">
-
-<h2>
-
-Temmuz Ayı Kanunları
-
-</h2>
-
+<h2>Temmuz Ayı Kanunları</h2>
 <div class="rulesBox">
-
-<p>
-
-Kanunlar buraya eklenecek.
-
-</p>
-
-<p>
-
-Word dosyasındaki tüm maddeler burada gösterilecek.
-
-</p>
-
+<p>Kanunlar buraya eklenecek.</p>
+<p>Grup kuralları ve cezalar burada gösterilecek.</p>
 </div>
-
 </section>
-
 </main>
 
 <footer>
-
 <div class="bottomBar">
-
-<button class="bottomBtn active" data-page="home">
-
-🏠
-
-</button>
-
-<button class="bottomBtn" data-page="admin">
-
-🔐
-
-</button>
-
-<button class="bottomBtn" data-page="score">
-
-🏆
-
-</button>
-
-<button class="bottomBtn" data-page="history">
-
-📜
-
-</button>
-
-<button class="bottomBtn" data-page="rules">
-
-📖
-
-</button>
-
+<button class="bottomBtn active" data-page="home">🏠</button>
+<button class="bottomBtn" data-page="admin">🔐</button>
+<button class="bottomBtn" data-page="score">🏆</button>
+<button class="bottomBtn" data-page="history">📜</button>
+<button class="bottomBtn" data-page="rules">📖</button>
 </div>
-
 </footer>
 
 <script src="config.js"></script>
