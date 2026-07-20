@@ -126,4 +126,47 @@ document.addEventListener("DOMContentLoaded",()=>{
 
     }
 
-});
+});function fillPlayerSelects(){
+
+    const ids=[
+        "firstPlayer",
+        "secondPlayer",
+        "thirdPlayer",
+        "fourthPlayer"
+    ];
+
+    ids.forEach(id=>{
+
+        const select=document.getElementById(id);
+
+        if(!select) return;
+
+        select.innerHTML="";
+
+        players.forEach(player=>{
+
+            select.innerHTML+=`
+            <option value="${player.id}">
+                ${player.name}
+            </option>
+            `;
+
+        });
+
+    });
+
+}
+
+const addGameBtn=document.getElementById("addGameBtn");
+
+if(addGameBtn){
+
+    addGameBtn.addEventListener("click",()=>{
+
+        document.getElementById("gameForm").style.display="block";
+
+        fillPlayerSelects();
+
+    });
+
+}
