@@ -353,7 +353,47 @@ color:#bdbdbd;
 }
 
 }
+.gamePlayer{
 
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+background:#2b3440;
+
+padding:12px;
+
+border-radius:10px;
+
+margin-bottom:10px;
+
+}
+
+.gamePlayer input[type=number]{
+
+width:80px;
+
+padding:8px;
+
+border:none;
+
+border-radius:8px;
+
+text-align:center;
+
+}
+
+.gamePlayer label{
+
+display:flex;
+
+align-items:center;
+
+gap:10px;
+
+}
 }
 
 }
